@@ -10,6 +10,9 @@ gov_data_api_key.txt
 fontawesome-free-5.15.1-web/
 all.min.css
 bootstrap.min.css
+bootstrap.min.js
+jquery.min.js
+popper.min.js
 
 # gitignore template for Jupyter Notebooks
 # website: http://jupyter.org/
