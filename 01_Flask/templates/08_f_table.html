@@ -1,0 +1,52 @@
+{% extends "08_base.html" %}
+{% block title %}Flask Web{% endblock %}
+{% block subtitle %}Fliterable Table&nbsp<i class="fas fa-table"></i>{% endblock %}
+{% block content %}
+<div>
+    <input class="form-control" id="myInput" type="text" placeholder="Search..">
+    <br>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>Firstname</th>
+            <th>Lastname</th>
+            <th>Email</th>
+        </tr>
+        </thead>
+        <tbody id="myTable">
+        <tr>
+            <td>John</td>
+            <td>Doe</td>
+            <td>john@example.com</td>
+        </tr>
+        <tr>
+            <td>Mary</td>
+            <td>Moe</td>
+            <td>mary@mail.com</td>
+        </tr>
+        <tr>
+            <td>July</td>
+            <td>Dooley</td>
+            <td>july@greatstuff.com</td>
+        </tr>
+        <tr>
+            <td>Anja</td>
+            <td>Ravendale</td>
+            <td>a_r@test.com</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tr").filter(function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+  });
+});
+</script>
+
+{% endblock %}
