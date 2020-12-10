@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flask Web</title>
+</head>
+<body>
+    {% if name %}
+        Hello {{ name | upper() }}!!!
+    {% else %}
+        Hello World!!!
+    {% endif %}
+    <br>
+    {{ item | default('item is not defined') }}
+    <br>
+    <ul>
+        {% for key, value in dt.items() %}
+            <li>{{ key | capitalize()}} : {{ value }}</li>
+        {% endfor %}
+    </ul>
+    <ul>
+        {% for i in range(5) %}
+            <li>{{ i }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
