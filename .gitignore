@@ -7,6 +7,9 @@ chromedriver.exe
 station_data/
 상가정보_202009/
 gov_data_api_key.txt
+fontawesome-free-5.15.1-web/
+all.min.css
+bootstrap.min.css
 
 # gitignore template for Jupyter Notebooks
 # website: http://jupyter.org/
