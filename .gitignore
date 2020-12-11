@@ -13,6 +13,7 @@ bootstrap.min.css
 bootstrap.min.js
 jquery.min.js
 popper.min.js
+bootstrap.bundle.min.js
 
 # gitignore template for Jupyter Notebooks
 # website: http://jupyter.org/
