@@ -2,7 +2,7 @@ import requests
 from urllib.parse import urlparse
 
 def get_weather():
-    key_fd = open('openweatherkey.txt', mode='r')
+    key_fd = open('./my_util/openweatherkey.txt', mode='r')
     oweather_key = key_fd.read(100)
     key_fd.close()
 
@@ -12,8 +12,10 @@ def get_weather():
     icon = result['weather'][0]['icon']
     desc = result['weather'][0]['description']
     temp = result['main']['temp']
+    temp = round(float(temp)+0.01, 1)
     temp_min = result['main']['temp_min']
     temp_max = result['main']['temp_max']
-    return f'''<img src="http://openweathermap.org/img/w/{icon}.png" height="32">
-    <strong>{desc}&#8451</strong>, 
-    온도: <strong>{temp}</strong>, {temp_min}/{temp_max}&#8451'''
+    
+    html = f'''<img src="http://openweathermap.org/img/w/{icon}.png" height="32"><strong>{desc}</strong>, 
+    온도: {temp}&#8451, 최저: {temp_min}&#8451/최고: {temp_max}&#8451'''
+    return html
