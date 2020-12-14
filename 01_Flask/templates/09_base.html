@@ -89,7 +89,7 @@
                     <div class="dropdown-divider"></div>
                     <li class="nav-item">
                         <a class="nav-link {% if menu.st %}active{% endif %}" 
-                           href="{% if menu.st %}#{% else %}#{% endif %}">주가 예측</a>
+                           href="/stock">주가 예측</a>
                     </li>
                     <div class="dropdown-divider"></div>
                     <li class="nav-item dropdown">
@@ -120,5 +120,16 @@
     </nav>
     {% block additional_body %}
     {% endblock %}
+
+    <script>
+        $(document).ready(function(){
+        $("#myInput").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $("#myTable tr").filter(function() {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+        });
+    </script> 
 </body>
 </html>
