@@ -36,6 +36,16 @@ def before_first_request():
     for i in kosdaq.index:
         kosdaq_dict[kosdaq['종목코드'][i]] = kosdaq['종목명'][i]
 
+    park = pd.read_csv('./static/data/park_result2.csv', sep=',')
+    del park['Unnamed: 0']
+    park.reset_index(drop=True, inplace=True)
+    # key: 공원명, value[0]: 구별, value[1]: 공원면적, value[2]: 위도, value[3]: 경도 인 딕셔너리 생성
+    park_dict = {}
+    gu = park['구별']; area = park['공원면적']
+    lat = park['위도']; lng = park['경도']
+    for i in park.index:
+        park_dict[park['공원명'][i]] = [gu[i], area[i], lat[i], lng[i]]
+
 @app.before_request
 def before_request():
     pass        # 모든 GET 요청을 처리하는 놈에 앞서서 공통적으로 뭔 일을 처리함
@@ -48,7 +58,7 @@ def index():
 @app.route('/park')
 def park():
     menu = {'ho':0, 'da':1, 'ml':0, 'se':1, 'co':0, 'cg':0, 'cr':0, 'st':0, 'wc':0}
-    return render_template('main.html', menu=menu, weather=get_weather_main())
+    return render_template('park.html', menu=menu, weather=get_weather_main())
 
 @app.route('/stock', methods=['GET', 'POST'])
 def stock():
