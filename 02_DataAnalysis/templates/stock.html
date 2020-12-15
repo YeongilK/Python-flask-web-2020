@@ -13,7 +13,7 @@
                         <td rowspan="2" style="vertical-align: middle"><label for="code">종목 코드</label></td>
                         <td>
                             <label class="form-check-label">
-                                <input type="radio" class="form-check-input" id="market" name="market" value="KS" checked>KOSPI
+                                <input type="radio" class="form-check-input" id="market1" name="market" value="KS" checked>KOSPI
                             </label>
                         </td>
                         <td>
@@ -27,7 +27,7 @@
                     <tr>
                         <td>
                             <label class="form-check-label">
-                                <input type="radio" class="form-check-input" id="market" name="market" value="KQ">KOSDAQ
+                                <input type="radio" class="form-check-input" id="market2" name="market" value="KQ">KOSDAQ
                             </label>
                         </td>
                         <td>
@@ -94,4 +94,14 @@
         </div>
         <div class="col-2"></div>
     </div> 
+{% endblock %}
+{% block additional_body %}
+    <script>
+        $('#KS').on('input', function() {
+            $('#market1')[0].checked = true
+        });
+        $('#KQ').on('input', function() {
+            $('#market2')[0].checked = true
+        });
+    </script>
 {% endblock %}
