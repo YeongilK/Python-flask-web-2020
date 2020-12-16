@@ -97,7 +97,7 @@ def park():
             gu_name = request.form['gu']
             df = park_gu[park_gu.index == gu_name].reset_index()
             park_result2 = {'gu':gu_name, 'gu_area':df['구면적'][0], 
-                            'park_area':df['공원총면적'][0], 
+                            'park_area':df['공원면적'][0], 
                             'park_cnt':df['공원수'][0]}
             select_gu = park_new[park_new['지역'] == gu_name]
 
