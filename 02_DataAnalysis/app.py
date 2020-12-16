@@ -1,10 +1,9 @@
 from flask import Flask, render_template, session, escape, request
 from datetime import timedelta, datetime
 from fbprophet import Prophet
-import os
+import os, folium, json, logging
+from logging.config import dictConfig
 import pandas as pd 
-import folium
-import json
 import pandas_datareader as pdr
 import matplotlib as mpl 
 import matplotlib.pyplot as plt 
@@ -16,6 +15,11 @@ from my_util.weather import get_weather
 app = Flask(__name__)
 app.secret_key = 'qwert12345'
 kospi_dict, kosdaq_dict = {}, {}
+
+with open('./logging.json', 'r') as file:
+    config = json.load(file)
+dictConfig(config)
+app.logger
 
 def get_weather_main():
     weather = None
@@ -52,6 +56,7 @@ def park():
     menu = {'ho':0, 'da':1, 'ml':0, 'se':1, 'co':0, 'cg':0, 'cr':0, 'st':0, 'wc':0}
     park_new = pd.read_csv('./static/data/park_info.csv')
     park_gu = pd.read_csv('./static/data/park_gu.csv')
+    park_gu.set_index('지역', inplace=True)
     if request.method == 'GET':
         map = folium.Map(location=[37.5502, 126.982], zoom_start=11)
         for i in park_new.index:
@@ -64,13 +69,16 @@ def park():
         mtime = int(os.stat(html_file).st_mtime)
         return render_template('park.html', menu=menu, weather=get_weather_main(),
                                 park_list=list(park_new['공원명'].values), 
-                                gu_list = list(park_new['지역'].unique()), mtime=mtime)
+                                gu_list = list(park_gu.index), mtime=mtime)
     else:
         gubun = request.form['gubun']
         if gubun == 'name':
             park_name = request.form['name']
             df = park_new[park_new['공원명'] == park_name].reset_index()
             park_result = {'name':park_name, 'addr':df['공원주소'][0], 'area':df.area[0], 'desc':df['공원개요'][0]}
+            
+            app.logger.debug(f"get park data: {gubun}, {park_name}")
+            
             map = folium.Map(location=[37.5502, 126.982], zoom_start=11)
             for i in park_new.index:
                 folium.CircleMarker([park_new.lat[i], park_new.lng[i]], 
@@ -87,11 +95,14 @@ def park():
                                     park_result=park_result, mtime=mtime)
         else:
             gu_name = request.form['gu']
-            df = park_gu[park_gu['구별'] == gu_name].reset_index()
+            df = park_gu[park_gu.index == gu_name].reset_index()
             park_result2 = {'gu':gu_name, 'gu_area':df['구면적'][0], 
                             'park_area':df['공원총면적'][0], 
                             'park_cnt':df['공원수'][0]}
             select_gu = park_new[park_new['지역'] == gu_name]
+
+            app.logger.debug(f"get park data: {gubun}, {gu_name}")
+
             map = folium.Map(location=[select_gu['lat'].mean(), select_gu['lng'].mean()], zoom_start=12)
             for i in select_gu.index:
                 folium.CircleMarker([select_gu.lat[i], select_gu.lng[i]], 
@@ -108,35 +119,37 @@ def park():
 def park_gu(option):
     menu = {'ho':0, 'da':1, 'ml':0, 'se':1, 'co':0, 'cg':0, 'cr':0, 'st':0, 'wc':0}
     park_new = pd.read_csv('./static/data/park_info.csv')
-    park_gu_new = pd.read_csv('./static/data/park_gu_new.csv')
+    park_gu = pd.read_csv('./static/data/park_gu.csv')
+    park_gu.set_index('지역', inplace=True)
     geo_path = './static/data/skorea_municipalities_geo_simple.json'
     geo_str = json.load(open(geo_path, encoding='utf-8'))
 
     map = folium.Map(location=[37.5502, 126.982], zoom_start=11, tiles='Stamen Toner')
     if option == 'area':
         map.choropleth(geo_data = geo_str,
-                       data = park_gu_new['공원총면적'],
-                       columns = [park_gu_new.index, park_gu_new['공원총면적']],
+                       data = park_gu['공원면적'],
+                       columns = [park_gu.index, park_gu['공원면적']],
                        fill_color = 'PuRd',
                        key_on = 'feature.id')
     elif option == 'count':
         map.choropleth(geo_data = geo_str,
-                       data = park_gu_new['공원수'],
-                       columns = [park_gu_new.index, park_gu_new['공원수']],
+                       data = park_gu['공원수'],
+                       columns = [park_gu.index, park_gu['공원수']],
                        fill_color = 'PuRd',
                        key_on = 'feature.id')
     elif option == 'area_ratio':
         map.choropleth(geo_data = geo_str,
-                       data = park_gu_new['공원면적비율'],
-                       columns = [park_gu_new.index, park_gu_new['공원면적비율']],
+                       data = park_gu['공원면적비율'],
+                       columns = [park_gu.index, park_gu['공원면적비율']],
                        fill_color = 'PuRd',
                        key_on = 'feature.id')
     elif option == 'per_person':
         map.choropleth(geo_data = geo_str,
-                       data = park_gu_new['인당공원면적'],
-                       columns = [park_gu_new.index, park_gu_new['인당공원면적']],
+                       data = park_gu['인당공원면적'],
+                       columns = [park_gu.index, park_gu['인당공원면적']],
                        fill_color = 'PuRd',
                        key_on = 'feature.id')
+    app.logger.debug(f"get park_gu data: {option}")
 
     for i in park_new.index:
         folium.CircleMarker([park_new.lat[i], park_new.lng[i]], 
@@ -173,7 +186,7 @@ def stock():
         end_learn = today - timedelta(days=1)
 
         stock_data = pdr.DataReader(code, data_source='yahoo', start=start_learn, end=end_learn)
-        app.logger.debug(f"get stock data: {code}")
+        app.logger.debug(f"get stock data: 주가지수: {market}, 종목코드: {code}, 학습기간: {learn_period}년, 예측기간: {pred_period}일")
         df = pd.DataFrame({'ds': stock_data.index, 'y': stock_data.Close})
         df.reset_index(inplace=True)
         del df['Date']
