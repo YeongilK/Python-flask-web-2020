@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, session, current_app
 from datetime import timedelta, datetime
-import os, folium, json, logging
 import pandas as pd 
+import os, folium, json, logging
 import pandas_datareader as pdr
 from my_util.weather import get_weather
 
