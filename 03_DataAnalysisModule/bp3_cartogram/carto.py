@@ -85,6 +85,30 @@ def drawKorea(targetData, blockedMap, cmapname, save_path):
     plt.tight_layout()
     plt.savefig(save_path)
 
+@carto_bp.route('/extinction', methods=['GET', 'POST'])
+def extinction():
+    menu = {'ho':0, 'da':1, 'ml':0, 'se':0, 'co':0, 'cg':1, 'cr':0, 'st':0, 'wc':0}
+    if request.method == 'GET':
+        return render_template('cartogram/extinction.html', menu=menu, weather=get_weather_main(),
+        item_list=['인구수 계','여성비율','2030 여성비율','고령자 비율', '인구소멸위기지역'])
+    else:
+        item = request.form['item']
+        f = request.files['csv']
+        filename = os.path.join(current_app.root_path, 'static/upload/') + f.filename
+        f.save(filename)
+        current_app.logger.info(f'Selected item: {item}, Saved file Path: {filename}')
+
+        extinction = pd.read_csv(filename)
+        cmap_dict = {'인구수 계': 'Blues', '여성비율': 'PuRd', '2030 여성비율': 'Oranges',
+                    '고령자 비율': 'Greens', '인구소멸위기지역': 'Reds'}
+
+        img_file = os.path.join(current_app.root_path, 'static/img/extinction_res.png')
+        drawKorea(item, extinction, cmap_dict[item], img_file)
+        mtime = int(os.stat(img_file).st_mtime)
+
+        return render_template('cartogram/extinction_res.html', menu=menu, weather=get_weather_main(),
+                                item=item, mtime=mtime)
+
 @carto_bp.route('/coffee', methods=['GET', 'POST'])
 def coffee():
     menu = {'ho':0, 'da':1, 'ml':0, 'se':0, 'co':0, 'cg':1, 'cr':0, 'st':0, 'wc':0}
@@ -110,26 +134,26 @@ def coffee():
         return render_template('cartogram/coffee_res.html', menu=menu, weather=get_weather_main(),
                                 item=item, mtime=mtime)
 
-@carto_bp.route('/extinction', methods=['GET', 'POST'])
-def extinction():
+@carto_bp.route('/burger', methods=['GET', 'POST'])
+def burger():
     menu = {'ho':0, 'da':1, 'ml':0, 'se':0, 'co':0, 'cg':1, 'cr':0, 'st':0, 'wc':0}
+    item_list = ['버거 지수','버거킹 매장수','맥도날드 매장수','KFC 매장수','롯데리아 매장수']
     if request.method == 'GET':
-        return render_template('cartogram/extinction.html', menu=menu, weather=get_weather_main(),
-        item_list=['인구수 계','여성비율','2030 여성비율','고령자 비율', '소멸위기지역'])
+        return render_template('cartogram/burger.html', menu=menu, weather=get_weather_main(), item_list=item_list)
     else:
         item = request.form['item']
         f = request.files['csv']
         filename = os.path.join(current_app.root_path, 'static/upload/') + f.filename
         f.save(filename)
         current_app.logger.info(f'Selected item: {item}, Saved file Path: {filename}')
+        burger = pd.read_csv(filename)
 
-        extinction = pd.read_csv(filename)
-        cmap_dict = {'인구수 계': 'Blues', '여성비율': 'PuRd', '2030 여성비율': 'Oranges',
-                    '고령자 비율': 'Greens', '소멸위기지역': 'Reds'}
+        cmap_dict = {'버거 지수': 'RdPu', '버거킹 매장수': 'Greens', '맥도날드 매장수': 'Oranges',
+                    'KFC 매장수': 'Blues', '롯데리아 매장수': 'Purples'}
 
-        img_file = os.path.join(current_app.root_path, 'static/img/extinction_res.png')
-        drawKorea(item, extinction, cmap_dict[item], img_file)
+        img_file = os.path.join(current_app.root_path, 'static/img/burger_res.png')
+        drawKorea(item, burger, cmap_dict[item], img_file)
         mtime = int(os.stat(img_file).st_mtime)
 
-        return render_template('cartogram/extinction_res.html', menu=menu, weather=get_weather_main(),
+        return render_template('cartogram/burger_res.html', menu=menu, weather=get_weather_main(),
                                 item=item, mtime=mtime)
