@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block weather %} {{ weather|safe() }} {% endblock %}
+{% block subtitle %}
+    <strong>{{item}}</strong>
+{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-1"></div>
+    <div class="col-10">
+        <table>
+            <tr class="d-flex">
+                <td class="col-9">
+                    <img src="{{url_for('static', filename='img/coffee_res.png', q=mtime)}}"
+                            width="600" alt="{{item}}">
+                </td>
+                <td class="col-3" style="text-align: center;">
+                    <button class="btn btn-primary" onclick="location.href='/cartogram/coffee'">재실행</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="col-2"></div>
+</div> 
+{% endblock %}
