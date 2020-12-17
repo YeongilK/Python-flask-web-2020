@@ -7,6 +7,18 @@ from my_util.weather import get_weather
 
 seoul_bp = Blueprint('seoul_bp', __name__)
 
+def get_weather_main():
+    weather = None
+    try:
+        weather = session['weather']
+    except:
+        current_app.logger.debug("get new weather info")
+        weather = get_weather()
+        session['weather'] = weather
+        session.permanent = True
+        current_app.permanent_session_lifetime = timedelta(minutes=60)
+    return weather
+
 @seoul_bp.route('/park', methods=['GET', 'POST'])
 def park():
     menu = {'ho':0, 'da':1, 'ml':0, 'se':1, 'co':0, 'cg':0, 'cr':0, 'st':0, 'wc':0}
@@ -23,7 +35,7 @@ def park():
         html_file = os.path.join(current_app.root_path, 'static/img/park.html')
         map.save(html_file)
         mtime = int(os.stat(html_file).st_mtime)
-        return render_template('seoul/park.html', menu=menu, weather=get_weather(),
+        return render_template('seoul/park.html', menu=menu, weather=get_weather_main(),
                                 park_list=list(park_new['공원명'].values), 
                                 gu_list = list(park_gu.index), mtime=mtime)
     else:
@@ -47,7 +59,7 @@ def park():
             html_file = os.path.join(current_app.root_path, 'static/img/park_res.html')
             map.save(html_file)
             mtime = int(os.stat(html_file).st_mtime)
-            return render_template('seoul/park_res.html', menu=menu, weather=get_weather(),
+            return render_template('seoul/park_res.html', menu=menu, weather=get_weather_main(),
                                     park_result=park_result, mtime=mtime)
         else:
             gu_name = request.form['gu']
@@ -68,7 +80,7 @@ def park():
             html_file = os.path.join(current_app.root_path, 'static/img/park_res.html')
             map.save(html_file)
             mtime = int(os.stat(html_file).st_mtime)
-            return render_template('seoul/park_res2.html', menu=menu, weather=get_weather(),
+            return render_template('seoul/park_res2.html', menu=menu, weather=get_weather_main(),
                                     park_result=park_result2, mtime=mtime)
 
 @seoul_bp.route('/park_gu/<option>')
@@ -101,7 +113,7 @@ def park_gu(option):
     html_file = os.path.join(current_app.root_path, 'static/img/park_gu.html')
     map.save(html_file)
     mtime = int(os.stat(html_file).st_mtime)
-    return render_template('seoul/park_gu.html', menu=menu, weather=get_weather(),
+    return render_template('seoul/park_gu.html', menu=menu, weather=get_weather_main(),
                             option=option, option_dict=option_dict, mtime=mtime)
 
 @seoul_bp.route('/crime/<option>')
@@ -143,5 +155,5 @@ def crime(option):
     html_file = os.path.join(current_app.root_path, 'static/img/crime.html')
     map.save(html_file)
     mtime = int(os.stat(html_file).st_mtime)
-    return render_template('seoul/crime.html', menu=menu, weather=get_weather(),
+    return render_template('seoul/crime.html', menu=menu, weather=get_weather_main(),
                             option=option, option_dict=option_dict, mtime=mtime)
