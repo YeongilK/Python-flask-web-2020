@@ -1,9 +1,9 @@
 from flask import Blueprint, render_template, request, session, current_app
 from datetime import timedelta, datetime
 from fbprophet import Prophet
-import os, folium, json, logging
 import pandas as pd 
 import pandas_datareader as pdr
+import os, folium, json, logging
 from my_util.weather import get_weather
 
 stock_bp = Blueprint('stock_bp', __name__)
