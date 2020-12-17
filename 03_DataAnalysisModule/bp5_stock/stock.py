@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, current_app
+from flask import Blueprint, render_template, request, session, current_app
 from datetime import timedelta, datetime
 from fbprophet import Prophet
 import os, folium, json, logging
@@ -7,6 +7,19 @@ import pandas_datareader as pdr
 from my_util.weather import get_weather
 
 stock_bp = Blueprint('stock_bp', __name__)
+
+def get_weather_main():
+    weather = None
+    try:
+        weather = session['weather']
+    except:
+        current_app.logger.debug("get new weather info")
+        weather = get_weather()
+        session['weather'] = weather
+        session.permanent = True
+        current_app.permanent_session_lifetime = timedelta(minutes=60)
+    return weather
+
 
 kospi_dict, kosdaq_dict = {}, {}
 kospi = pd.read_csv('./static/data/KOSPI.csv', dtype={'종목코드': str})
@@ -40,7 +53,6 @@ def stock():
         end_learn = today - timedelta(days=1)
         stock_data = pdr.DataReader(code, data_source='yahoo', start=start_learn, end=end_learn)
 
-        current_app.logger.debug(f"get stock data: 주가지수: {market}, 종목코드: {code}, 학습기간: {learn_period}년, 예측기간: {pred_period}일")
         
         df = pd.DataFrame({'ds': stock_data.index, 'y': stock_data.Close})
         df.reset_index(inplace=True)
@@ -59,5 +71,6 @@ def stock():
         fig.savefig(img_file)
         mtime = int(os.stat(img_file).st_mtime)
 
-        return render_template('stock/stock_res.html', menu=menu, weather=get_weather(), 
+        current_app.logger.debug(f"get stock data: 주가지수: {market}, 종목명: {company}, 종목코드: {code}, 학습기간: {learn_period}년, 예측기간: {pred_period}일")
+        return render_template('stock/stock_res.html', menu=menu, weather=get_weather_main(), 
                                 mtime=mtime, company=company, code=code)
