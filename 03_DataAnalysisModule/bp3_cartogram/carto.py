@@ -131,8 +131,13 @@ def coffee():
         drawKorea(item, coffee, cmap_dict[item], img_file)
         mtime = int(os.stat(img_file).st_mtime)
 
+        df = coffee.sort_values(by=item, ascending=False)[['ID',item]].reset_index()
+        top10 = {}
+        for i in range(10):
+            top10[df['ID'][i]] = round(df[item][i], 2)
+
         return render_template('cartogram/coffee_res.html', menu=menu, weather=get_weather_main(),
-                                item=item, mtime=mtime)
+                                item=item, top10=top10, mtime=mtime)
 
 @carto_bp.route('/burger', methods=['GET', 'POST'])
 def burger():
@@ -155,5 +160,10 @@ def burger():
         drawKorea(item, burger, cmap_dict[item], img_file)
         mtime = int(os.stat(img_file).st_mtime)
 
+        df = burger.sort_values(by=item, ascending=False)[['ID',item]].reset_index()
+        top10 = {}
+        for i in range(10):
+            top10[df['ID'][i]] = round(df[item][i], 2)
+
         return render_template('cartogram/burger_res.html', menu=menu, weather=get_weather_main(),
-                                item=item, mtime=mtime)
+                                item=item, top10=top10, mtime=mtime)
