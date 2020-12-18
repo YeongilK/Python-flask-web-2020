@@ -1,18 +1,12 @@
-from flask import Flask, render_template, session, escape, request
+import os, json, logging
+from flask import Flask, render_template, session, request, g
 from datetime import timedelta, datetime
-from my_util.weather import get_weather
 from logging.config import dictConfig
 from bp1_seoul.seoul import seoul_bp
 from bp3_cartogram.carto import carto_bp
 from bp5_stock.stock import stock_bp
-import os, folium, json, logging
-import pandas as pd 
-import pandas_datareader as pdr
-import matplotlib as mpl 
-import matplotlib.pyplot as plt 
-# 한글폰트 사용
-mpl.rc('font', family='Malgun Gothic')
-mpl.rc('axes', unicode_minus=False)
+from bp6_wordcloud.word import word_bp
+from my_util.weather import get_weather
 
 app = Flask(__name__)
 app.secret_key = 'qwert12345'
@@ -20,11 +14,12 @@ app.config['SESSION_COOKIE_PATH'] = '/'
 app.register_blueprint(seoul_bp, url_prefix='/seoul')
 app.register_blueprint(carto_bp, url_prefix='/cartogram')
 app.register_blueprint(stock_bp, url_prefix='/stock')
+app.register_blueprint(word_bp, url_prefix='/wordcloud')
 
 with open('./logging.json', 'r') as file:
     config = json.load(file)
 dictConfig(config)
-app.logger
+#app.logger
 
 def get_weather_main():
     weather = None
