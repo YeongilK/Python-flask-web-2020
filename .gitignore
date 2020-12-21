@@ -17,6 +17,7 @@ bootstrap.bundle.min.js
 upload/
 img/
 data/
+covid.db
 
 # gitignore template for Jupyter Notebooks
 # website: http://jupyter.org/
