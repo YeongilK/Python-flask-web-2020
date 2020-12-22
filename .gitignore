@@ -18,6 +18,8 @@ upload/
 img/
 data/
 covid.db
+css/
+js/
 
 # gitignore template for Jupyter Notebooks
 # website: http://jupyter.org/
