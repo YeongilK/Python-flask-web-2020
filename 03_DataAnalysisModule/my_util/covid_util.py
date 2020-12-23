@@ -13,8 +13,8 @@ def change_date(x):
 def get_region_by_date(date):
     with open('bp2_covid/gov_data_api_key.txt', mode='r') as key_fd:
         govapi_key = key_fd.read(100)
-    start_date = date.replace('-','')
-    end_date = date.replace('-','')
+    start_date = date.replace('-', '')
+    end_date = date.replace('-', '')
     page = 1
     corona_url = 'http://openapi.data.go.kr/openapi/service/rest/Covid19/getCovid19SidoInfStateJson'
     url = f'{corona_url}?ServiceKey={govapi_key}&pageNo={page}&numOfRows=10&startCreateDt={start_date}&endCreateDt={end_date}'
@@ -62,8 +62,8 @@ def get_region_by_date(date):
 def get_agender_by_date(date):
     with open('bp2_covid/gov_data_api_key.txt', mode='r') as key_fd:
         govapi_key = key_fd.read(100)
-    start_date = date.replace('-','')
-    end_date = date.replace('-','')
+    start_date = date.replace('-', '')
+    end_date = date.replace('-', '')
     page = 1
     corona_url = 'http://openapi.data.go.kr/openapi/service/rest/Covid19/getCovid19GenAgeCaseInfJson'
     url = f'{corona_url}?ServiceKey={govapi_key}&pageNo={page}&numOfRows=10&startCreateDt={start_date}&endCreateDt={end_date}'
