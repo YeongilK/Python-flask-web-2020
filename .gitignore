@@ -14,6 +14,7 @@ covid.db
 css/
 js/
 input/
+03_DataAnalysisModule/static/img/
 
 # gitignore template for Jupyter Notebooks
 # website: http://jupyter.org/
