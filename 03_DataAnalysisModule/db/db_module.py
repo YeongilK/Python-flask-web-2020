@@ -15,7 +15,6 @@ def get_region_daily(date):
 def write_region(params):
     conn = sqlite3.connect('./db/covid.db')
     cur = conn.cursor()
-    #print(params)
     sql = '''insert into region(stdDay, deathCnt, defCnt, gubun, incDec, isolClearCnt,
              isolIngCnt, localOccCnt, overFlowCnt, qurRate) values(?,?,?,?,?,?,?,?,?,?);'''
     cur.execute(sql, params)
@@ -40,7 +39,6 @@ def get_agender_daily(date):
 def write_agender(params):
     conn = sqlite3.connect('./db/covid.db')
     cur = conn.cursor()
-    #print(params)
     sql = '''insert into agender(stdDay, confCase, confCaseRate, death, deathRate,
              criticalRate, gubun, seq, updateDt) values(?,?,?,?,?,?,?,?,?);'''
     cur.execute(sql, params)
@@ -61,3 +59,27 @@ def get_region_items_by_gubun(items, gubun):
     cur.close()
     conn.close()
     return rows
+
+def get_overseas_daily(date):
+    conn = sqlite3.connect('./db/covid.db')
+    cur = conn.cursor()
+
+    sql = 'select * from overseas where stdDay=? order by defCnt desc;'
+    cur.execute(sql, (date,))
+    rows = cur.fetchall()
+    
+    cur.close()
+    conn.close()
+    return rows
+
+def write_overseas(params):
+    conn = sqlite3.connect('./db/covid.db')
+    cur = conn.cursor()
+    sql = '''insert into overseas(stdDay, areaNm, nationNm, deathCnt, 
+            deathRate, defCnt) values (?,?,?,?,?,?);'''
+    cur.execute(sql, params)
+    conn.commit()
+
+    cur.close()
+    conn.close()
+    return

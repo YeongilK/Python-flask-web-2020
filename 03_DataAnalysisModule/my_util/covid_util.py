@@ -95,3 +95,36 @@ def get_agender_by_date(date):
         dm.write_agender(params)
 
     current_app.logger.info(f'{date} agender data successfully inserted.')
+
+def get_overseas_by_date(date):
+    with open('bp2_covid/gov_data_api_key.txt', mode='r') as key_fd:
+        govapi_key = key_fd.read(100)
+    start_date = date.replace('-', '')
+    end_date = date.replace('-', '')
+    page = 1
+    corona_url = 'http://openapi.data.go.kr/openapi/service/rest/Covid19/getCovid19NatInfStateJson'
+    url = f'{corona_url}?ServiceKey={govapi_key}&pageNo={page}&numOfRows=10&startCreateDt={start_date}&endCreateDt={end_date}'
+
+    result = requests.get(url)
+    soup = BeautifulSoup(result.text, 'xml')
+    resultCode = soup.find('resultCode').get_text()
+    if resultCode == '99':
+        current_app.logger.info(soup.find('resultMsg').string)
+        return
+    if resultCode == '00' and soup.find('totalCount').string == '0':
+        current_app.logger.info('There is no data!!!')
+        return
+        
+    items = soup.find_all('item')
+    for item in items:
+        stdDay = change_date(item.find('stdDay').string)
+        areaNm = item.find('areaNm').string
+        nationNm = item.find('nationNm').string
+        deathCnt = int(item.find('natDeathCnt').string)
+        deathRate = float(item.find('natDeathRate').string)
+        defCnt = int(item.find('natDefCnt').string)
+
+        params = [stdDay, areaNm, nationNm, deathCnt, deathRate, defCnt]
+        dm.write_overseas(params)
+
+    current_app.logger.info(f'{date} agender data successfully inserted.')

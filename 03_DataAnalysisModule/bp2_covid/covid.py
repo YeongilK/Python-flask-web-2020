@@ -54,3 +54,20 @@ def update_agender(date):
         cu.get_agender_by_date(date)
 
     return redirect(url_for('covid_bp.agender')+f'?date={date}')
+
+@covid_bp.route('/overseas')
+def overseas():
+    menu = {'ho':0, 'da':1, 'ml':0, 'se':0, 'co':1, 'cg':0, 'cr':0, 'st':0, 'wc':0}
+    date = request.args.get('date', datetime.now().strftime('%Y-%m-%d'))
+    rows = dm.get_overseas_daily(date)
+
+    return render_template('covid/overseas.html', menu=menu, weather=get_weather_main(),
+                            date=date, rows=rows)
+
+@covid_bp.route('/update_overseas/<date>')
+def update_overseas(date):
+    rows = dm.get_overseas_daily(date)
+    if len(rows) == 0:
+        cu.get_overseas_by_date(date)
+
+    return redirect(url_for('covid_bp.overseas')+f'?date={date}')
