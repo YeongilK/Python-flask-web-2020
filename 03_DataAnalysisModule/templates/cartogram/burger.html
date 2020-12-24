@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block weather %} {{ weather|safe() }} {% endblock %}
 {% block subtitle %}
-    <strong>버거 지수</strong>
+    <strong>버거 지수</strong> <small>(버거킹매장수 + 맥도날드매장수 + KFC매장수) ÷ 롯데리아매장수</small>
 {% endblock %}
 {% block content %}
     <div class="row">
