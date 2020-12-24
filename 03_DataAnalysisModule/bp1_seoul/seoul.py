@@ -108,7 +108,7 @@ def park_gu(option):
     for i in park_new.index:
         folium.CircleMarker([park_new.lat[i], park_new.lng[i]], 
                         radius=int(park_new['size'][i]),
-                        tooltip=f"{park_new['공원명'][i]}({int(park_new.area[i])}㎡)",
+                        tooltip=f"{park_new['지역'][i]}-{park_new['공원명'][i]}({int(park_new.area[i])}㎡)",
                         color='blue', fill_color='blue').add_to(map)
     html_file = os.path.join(current_app.root_path, 'static/img/park_gu.html')
     map.save(html_file)
