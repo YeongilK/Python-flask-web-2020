@@ -8,18 +8,12 @@ station_data/
 상가정보_202009/
 gov_data_api_key.txt
 fontawesome-free-5.15.1-web/
-all.min.css
-bootstrap.min.css
-bootstrap.min.js
-jquery.min.js
-popper.min.js
-bootstrap.bundle.min.js
 upload/
-img/
 data/
 covid.db
 css/
 js/
+input/
 
 # gitignore template for Jupyter Notebooks
 # website: http://jupyter.org/
