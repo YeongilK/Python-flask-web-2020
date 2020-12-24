@@ -90,7 +90,7 @@ def extinction():
     menu = {'ho':0, 'da':1, 'ml':0, 'se':0, 'co':0, 'cg':1, 'cr':0, 'st':0, 'wc':0}
     if request.method == 'GET':
         return render_template('cartogram/extinction.html', menu=menu, weather=get_weather_main(),
-        item_list=['인구수 계','여성비율','2030 여성비율','고령자 비율', '인구소멸위기지역'])
+        item_list=['인구수 계','여성비율','2030 여성비율','고령자 비율', '소멸위기지역'])
     else:
         item = request.form['item']
         f = request.files['csv']
@@ -100,7 +100,7 @@ def extinction():
 
         extinction = pd.read_csv(filename)
         cmap_dict = {'인구수 계': 'Blues', '여성비율': 'PuRd', '2030 여성비율': 'Oranges',
-                    '고령자 비율': 'Greens', '인구소멸위기지역': 'Reds'}
+                    '고령자 비율': 'Greens', '소멸위기지역': 'Reds'}
 
         img_file = os.path.join(current_app.root_path, 'static/img/extinction_res.png')
         drawKorea(item, extinction, cmap_dict[item], img_file)
