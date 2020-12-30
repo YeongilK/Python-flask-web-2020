@@ -66,6 +66,12 @@
                             <a class="dropdown-item" href="/covid/daily">일자별</a>
                             <a class="dropdown-item" href="/covid/agender">연령별/성별</a>
                             <a class="dropdown-item" href="/covid/overseas">해외현황</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item disabled" href="#">서울시 구별</a>
+                            <a class="dropdown-item ml-2" href="/covid/seoul_seq">- 추이</a>
+                            <a class="dropdown-item ml-2" href="/covid/seoul_comp">- 비교</a>
+                            <a class="dropdown-item ml-2" href="/covid/seoul_map/ratio">- 지도</a>
+                            <a class="dropdown-item ml-2" href="/covid/seoul_db_update">- DB 갱신</a>
                         </div>
                     </li>
                     <div class="dropdown-divider"></div>
@@ -83,8 +89,9 @@
                         <a class="nav-link dropdown-toggle {% if menu.cr %}active{% endif %}" 
                            data-toggle="dropdown" href="#">크롤링</a>
                         <div class="dropdown-menu">
-                            <a class="dropdown-item" href="#">샌드위치</a>
-                            <a class="dropdown-item" href="#">주유소</a>
+                            <a class="dropdown-item" href="/crawling/food">맛집(식신)</a>
+                            <a class="dropdown-item" href="/crawling/music">음악(지니)</a>
+                            <a class="dropdown-item" href="/crawling/book">콘서트티켓(인터파크)</a>
                         </div>
                     </li>
                     <div class="dropdown-divider"></div>

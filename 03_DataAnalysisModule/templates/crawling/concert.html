@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block additional_head %}
+    <style>
+        th, td {
+            text-align: center;
+        }
+    </style>
+{% endblock %}
+{% block weather %} {{ weather|safe() }} {% endblock %}
+{% block subtitle %}
+    <strong>콘서트 티켓(인터파크)</strong>
+{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-12">
+            <table class="table table-sm" style="margin-bottom: 80px;">
+                <tr class="d-flex">
+                    <th class="col-1">순위</th>
+                    <th class="col-1">이미지</th>
+                    <th class="col-5">공연</th>
+                    <th class="col-3">기간</th>
+                    <th class="col-2">판매점유율</th>
+                </tr>
+                {% for concert in concert_list %}
+                    <tr class="d-flex">
+                        <td class="col-1">{{concert.rank}}</td>
+                        <td class="col-1">
+                            <img src="{{concert.img}}" alt="공연 이미지" height="48">
+                        </td>
+                        <td class="col-5"><a href="{{concert.href}}" target="_blank">{{concert.title}}</a></td>
+                        <td class="col-3">{{concert.period}}</td>
+                        <td class="col-2">{{concert.share}}</td>
+                    </tr>
+                {% endfor %}
+            </table>            
+        </div>
+    </div>
+{% endblock %}
