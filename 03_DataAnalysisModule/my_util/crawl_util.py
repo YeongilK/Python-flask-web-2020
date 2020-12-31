@@ -69,7 +69,10 @@ def interpark():
         rank = int(tds[0].find('i').get_text())
         title = tds[0].select_one('.prdInfo').attrs['title']
         if tds[1].find('div'):
-            period = tds[1].get_text()[13:].strip()
+            if tds[1].find('D'):
+                period = tds[1].get_text()[13:].strip()
+            else:
+                period = tds[1].get_text()[10:].strip()
         else:
             period = tds[1].get_text().strip()
         share = tds[2].get_text()
