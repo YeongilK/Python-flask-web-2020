@@ -25,9 +25,7 @@ def get_weather_main():
 
 @covid_bp.route('/daily')
 def daily():
-    menu = {'ho':0, 'da':1, 'ml':0, 
-            'se':0, 'co':1, 'cg':0, 'cr':0, 'wc':0,
-            'cf':0, 'ac':0, 're':0, 'cu':0}
+    menu = {'ho':0, 'da':1, 'ml':0, 'se':0, 'co':1, 'cg':0, 'cr':0, 'st':0, 'wc':0}
     date = request.args.get('date', datetime.now().strftime('%Y-%m-%d'))
     rows = dm.get_region_daily(date)
 
@@ -44,9 +42,7 @@ def update_region(date):
 
 @covid_bp.route('/agender')
 def agender():
-    menu = {'ho':0, 'da':1, 'ml':0, 
-            'se':0, 'co':1, 'cg':0, 'cr':0, 'wc':0,
-            'cf':0, 'ac':0, 're':0, 'cu':0}
+    menu = {'ho':0, 'da':1, 'ml':0, 'se':0, 'co':1, 'cg':0, 'cr':0, 'st':0, 'wc':0}
     date = request.args.get('date', datetime.now().strftime('%Y-%m-%d'))
     rows = dm.get_agender_daily(date)
 
@@ -63,9 +59,7 @@ def update_agender(date):
 
 @covid_bp.route('/overseas')
 def overseas():
-    menu = {'ho':0, 'da':1, 'ml':0, 
-            'se':0, 'co':1, 'cg':0, 'cr':0, 'wc':0,
-            'cf':0, 'ac':0, 're':0, 'cu':0}
+    menu = {'ho':0, 'da':1, 'ml':0, 'se':0, 'co':1, 'cg':0, 'cr':0, 'st':0, 'wc':0}
     date = request.args.get('date', datetime.now().strftime('%Y-%m-%d'))
     rows = dm.get_overseas_daily(date)
 
@@ -85,9 +79,7 @@ def seoul_seq():
     if request.method == 'GET':
         mpl.rc('font', family='Malgun Gothic')
         mpl.rc('axes', unicode_minus=False)
-        menu = {'ho':0, 'da':1, 'ml':0, 
-            'se':0, 'co':1, 'cg':0, 'cr':0, 'wc':0,
-            'cf':0, 'ac':0, 're':0, 'cu':0}
+        menu = {'ho':0, 'da':1, 'ml':0, 'se':0, 'co':1, 'cg':0, 'cr':0, 'st':0, 'wc':0}
 
         start_date = request.args.get('startDate', '2020-01-01')
         end_date = request.args.get('endDate', datetime.now().strftime('%Y-%m-%d'))
@@ -159,9 +151,7 @@ def seoul_comp():
 
 @covid_bp.route('/seoul_map/<option>')
 def seoul_map(option):
-    menu = {'ho':0, 'da':1, 'ml':0, 
-            'se':0, 'co':1, 'cg':0, 'cr':0, 'wc':0,
-            'cf':0, 'ac':0, 're':0, 'cu':0}
+    menu = {'ho':0, 'da':1, 'ml':0, 'se':0, 'co':1, 'cg':0, 'cr':0, 'st':0, 'wc':0}
     geo_data = json.load(open('./static/data/skorea_municipalities_geo_simple.json', encoding='utf8'))
     
     start_date = request.args.get('startDate', '2020-01-01')
