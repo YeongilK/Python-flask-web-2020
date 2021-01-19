@@ -6,8 +6,8 @@ from bp1_seoul.seoul import seoul_bp
 from bp2_covid.covid import covid_bp
 from bp3_cartogram.carto import carto_bp
 from bp4_crawling.crawl import crawl_bp
-from bp5_stock.stock import stock_bp
-from bp6_wordcloud.word import word_bp
+from bp5_wordcloud.word import word_bp
+from bp6_classification.clsf import clsf_bp
 from my_util.weather import get_weather
 
 app = Flask(__name__)
@@ -17,8 +17,9 @@ app.register_blueprint(seoul_bp, url_prefix='/seoul')
 app.register_blueprint(covid_bp, url_prefix='/covid')
 app.register_blueprint(carto_bp, url_prefix='/cartogram')
 app.register_blueprint(crawl_bp, url_prefix='/crawling')
-app.register_blueprint(stock_bp, url_prefix='/stock')
 app.register_blueprint(word_bp, url_prefix='/wordcloud')
+app.register_blueprint(stock_bp, url_prefix='/classification')
+app.register_blueprint(rgrs_bp, url_prefix='/regression')
 
 with open('./logging.json', 'r') as file:
     config = json.load(file)
