@@ -24,7 +24,9 @@ def get_weather_main():
 
 @word_bp.route('/text', methods=['GET', 'POST'])
 def text():
-    menu = {'ho':0, 'da':1, 'ml':0, 'se':0, 'co':0, 'cg':0, 'cr':0, 'st':0, 'wc':1}
+    menu = {'ho':0, 'da':1, 'ml':0, 
+            'se':0, 'co':0, 'cg':0, 'cr':0, 'wc':1,
+            'cf':0, 'ac':0, 're':0, 'cu':0}
     if request.method == 'GET':
         return render_template('wordcloud/text.html', menu=menu, weather=get_weather_main())
     else:
@@ -55,12 +57,18 @@ def text():
 
 @word_bp.route('/sports_news')
 def sports_news():
-    menu = {'ho':0, 'da':1, 'ml':0, 'se':0, 'co':0, 'cg':0, 'cr':0, 'st':0, 'wc':1}
+    menu = {'ho':0, 'da':1, 'ml':0, 
+            'se':0, 'co':0, 'cg':0, 'cr':0, 'wc':1,
+            'cf':0, 'ac':0, 're':0, 'cu':0}
     text_file = os.path.join(current_app.root_path, 'static/data/sports.txt')
     get_sports_news(text_file)
 
     text = open(text_file, encoding='utf-8').read()
-    stop_words = ['오피셜']
+    stop_words = [
+        '오피셜', '더', '저', '점', '주', '것', '나',
+        '네', '제', '의', '셜', '명', '내', '호', '등',
+        '입', '전', '첫', '석', '원'
+    ]
     mask_file = os.path.join(current_app.root_path, 'static/img/ball.jpg')
     img_file = os.path.join(current_app.root_path, 'static/img/sports.png')
     hanCloud(text, stop_words, mask_file, img_file)

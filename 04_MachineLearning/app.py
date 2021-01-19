@@ -8,6 +8,7 @@ from bp3_cartogram.carto import carto_bp
 from bp4_crawling.crawl import crawl_bp
 from bp5_wordcloud.word import word_bp
 from bp6_classification.clsf import clsf_bp
+from bp8_regression.rgrs import rgrs_bp
 from my_util.weather import get_weather
 
 app = Flask(__name__)
@@ -18,7 +19,7 @@ app.register_blueprint(covid_bp, url_prefix='/covid')
 app.register_blueprint(carto_bp, url_prefix='/cartogram')
 app.register_blueprint(crawl_bp, url_prefix='/crawling')
 app.register_blueprint(word_bp, url_prefix='/wordcloud')
-app.register_blueprint(stock_bp, url_prefix='/classification')
+app.register_blueprint(clsf_bp, url_prefix='/classification')
 app.register_blueprint(rgrs_bp, url_prefix='/regression')
 
 with open('./logging.json', 'r') as file:
@@ -40,7 +41,9 @@ def get_weather_main():
 
 @app.route('/')
 def index():
-    menu = {'ho':1, 'da':0, 'ml':0, 'se':0, 'co':0, 'cg':0, 'cr':0, 'st':0, 'wc':0}
+    menu = {'ho':1, 'da':0, 'ml':0, 
+            'se':0, 'co':0, 'cg':0, 'cr':0, 'wc':0,
+            'cf':0, 'ac':0, 're':0, 'cu':0}
     return render_template('main.html', menu=menu, weather=get_weather_main())
 
 if __name__ == '__main__':

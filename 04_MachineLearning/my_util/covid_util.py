@@ -11,10 +11,10 @@ def change_date(x):
     return f'{y[0][:-1]}-{month}-{day}'
 
 def get_region_by_date(date):
-    with open('bp2_covid/gov_data_api_key.txt', mode='r') as key_fd:
+    with open('static/data/gov_data_api_key.txt', mode='r') as key_fd:
         govapi_key = key_fd.read(100)
-    start_date = date.replace('-', '')
-    end_date = date.replace('-', '')
+    start_date = date.replace('-','')
+    end_date = date.replace('-','')
     page = 1
     corona_url = 'http://openapi.data.go.kr/openapi/service/rest/Covid19/getCovid19SidoInfStateJson'
     url = f'{corona_url}?ServiceKey={govapi_key}&pageNo={page}&numOfRows=10&startCreateDt={start_date}&endCreateDt={end_date}'
@@ -60,10 +60,10 @@ def get_region_by_date(date):
     current_app.logger.info(f'{date} region data successfully inserted.')
 
 def get_agender_by_date(date):
-    with open('bp2_covid/gov_data_api_key.txt', mode='r') as key_fd:
+    with open('static/data/gov_data_api_key.txt', mode='r') as key_fd:
         govapi_key = key_fd.read(100)
-    start_date = date.replace('-', '')
-    end_date = date.replace('-', '')
+    start_date = date.replace('-','')
+    end_date = date.replace('-','')
     page = 1
     corona_url = 'http://openapi.data.go.kr/openapi/service/rest/Covid19/getCovid19GenAgeCaseInfJson'
     url = f'{corona_url}?ServiceKey={govapi_key}&pageNo={page}&numOfRows=10&startCreateDt={start_date}&endCreateDt={end_date}'
@@ -93,39 +93,6 @@ def get_agender_by_date(date):
         params = [createDt, confCase, confCaseRate, death, deathRate, criticalRate,
                     gubun,seq,updateDt]
         dm.write_agender(params)
-
-    current_app.logger.info(f'{date} agender data successfully inserted.')
-
-def get_overseas_by_date(date):
-    with open('bp2_covid/gov_data_api_key.txt', mode='r') as key_fd:
-        govapi_key = key_fd.read(100)
-    start_date = date.replace('-', '')
-    end_date = date.replace('-', '')
-    page = 1
-    corona_url = 'http://openapi.data.go.kr/openapi/service/rest/Covid19/getCovid19NatInfStateJson'
-    url = f'{corona_url}?ServiceKey={govapi_key}&pageNo={page}&numOfRows=10&startCreateDt={start_date}&endCreateDt={end_date}'
-
-    result = requests.get(url)
-    soup = BeautifulSoup(result.text, 'xml')
-    resultCode = soup.find('resultCode').get_text()
-    if resultCode == '99':
-        current_app.logger.info(soup.find('resultMsg').string)
-        return
-    if resultCode == '00' and soup.find('totalCount').string == '0':
-        current_app.logger.info('There is no data!!!')
-        return
-        
-    items = soup.find_all('item')
-    for item in items:
-        stdDay = change_date(item.find('stdDay').string)
-        areaNm = item.find('areaNm').string
-        nationNm = item.find('nationNm').string
-        deathCnt = int(item.find('natDeathCnt').string)
-        deathRate = float(item.find('natDeathRate').string)
-        defCnt = int(item.find('natDefCnt').string)
-
-        params = [stdDay, areaNm, nationNm, deathCnt, deathRate, defCnt]
-        dm.write_overseas(params)
 
     current_app.logger.info(f'{date} agender data successfully inserted.')
 
@@ -213,7 +180,8 @@ def get_new_seoul_data():
     })
     df['연번'] = df['연번'].astype(int)
     df.sort_values('연번', inplace=True)
-    df['확진일'] = pd.to_datetime('2020.'+df['확진일']).astype(str)
+    #df['확진일'] = pd.to_datetime('2020.'+df['확진일']).astype(str)
+    df['확진일'] = pd.to_datetime(df['확진일']).astype(str)
     df['지역'].fillna('기타', inplace=True)
     df['지역'] = df['지역'].map(lambda s: s.strip())
     df.fillna(' ', inplace=True)
