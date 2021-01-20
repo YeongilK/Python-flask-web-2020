@@ -34,7 +34,7 @@ def before_app_first_request():
 
 @rgrs_bp.route('/stock', methods=['GET', 'POST'])
 def stock():
-    menu = {'ho':0, 'da':0, 'ml':10, 
+    menu = {'ho':0, 'da':0, 'ml':1, 
             'se':0, 'co':0, 'cg':0, 'cr':0, 'wc':0,
             'cf':0, 'ac':0, 're':1, 'cu':0}
 
