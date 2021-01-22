@@ -86,7 +86,7 @@ def stock():
 
 @rgrs_bp.route('/iris', methods=['GET', 'POST'])
 def iris():
-    menu = {'ho':0, 'da':0, 'ml':10, 
+    menu = {'ho':0, 'da':0, 'ml':1, 
             'se':0, 'co':0, 'cg':0, 'cr':0, 'wc':0,
             'cf':0, 'ac':0, 're':1, 'cu':0}
     if request.method == 'GET':
