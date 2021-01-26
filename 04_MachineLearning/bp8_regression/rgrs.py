@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 import os
 import numpy as np 
 import pandas as pd
+import matplotlib.pyplot as plt
 import pandas_datareader as pdr
 from sklearn.linear_model import LinearRegression
 from my_util.weather import get_weather
