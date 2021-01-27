@@ -11,6 +11,10 @@ from my_util.weather import get_weather
 
 clust_bp = Blueprint('clust_bp', __name__)
 
+menu = {'ho':0, 'da':0, 'ml':1, 
+        'se':0, 'co':0, 'cg':0, 'cr':0, 'wc':0,
+        'cf':0, 'ac':0, 're':0, 'cu':1}
+
 def get_weather_main():
     ''' weather = None
     try:
@@ -26,9 +30,6 @@ def get_weather_main():
 
 @clust_bp.route('/cluster', methods=['GET', 'POST'])
 def cluster():
-    menu = {'ho':0, 'da':0, 'ml':1, 
-            'se':0, 'co':0, 'cg':0, 'cr':0, 'wc':0,
-            'cf':0, 'ac':0, 're':0, 'cu':1}
     if request.method == 'GET':
         return render_template('clustering/cluster.html', menu=menu, weather=get_weather())
     else:
