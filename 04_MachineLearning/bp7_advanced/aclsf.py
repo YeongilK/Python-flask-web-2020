@@ -11,6 +11,10 @@ from my_util.weather import get_weather
 
 aclsf_bp = Blueprint('aclsf_bp', __name__)
 
+menu = {'ho':0, 'da':0, 'ml':1, 
+        'se':0, 'co':0, 'cg':0, 'cr':0, 'wc':0,
+        'cf':0, 'ac':1, 're':0, 'cu':0}
+
 def get_weather_main():
     ''' weather = None
     try:
@@ -26,9 +30,6 @@ def get_weather_main():
 
 @aclsf_bp.route('/digits', methods=['GET', 'POST'])
 def digits():
-    menu = {'ho':0, 'da':0, 'ml':1, 
-            'se':0, 'co':0, 'cg':0, 'cr':0, 'wc':0,
-            'cf':0, 'ac':1, 're':0, 'cu':0}
     if request.method == 'GET':
         return render_template('advanced/digits.html', menu=menu, weather=get_weather())
     else:
@@ -65,3 +66,38 @@ def digits():
         
         return render_template('advanced/digits_res.html', menu=menu, mtime=mtime,
                                 result=result_dict, weather=get_weather())
+
+@aclsf_bp.before_app_first_request
+def before_app_first_request():
+    global news_count_lr, news_tfidf_lr, news_tfidf_sv
+    news_count_lr = joblib.load('static/model/news_count_lr.pkl')
+    news_tfidf_lr = joblib.load('static/model/news_tfidf_lr.pkl')
+    news_tfidf_sv = joblib.load('static/model/news_tfidf_sv.pkl')
+
+@aclsf_bp.route('/news', methods=['GET', 'POST'])
+def news():
+    target_names = ['alt.atheism', 'comp.graphics', 'comp.os.ms-windows.misc',
+                'comp.sys.ibm.pc.hardware', 'comp.sys.mac.hardware', 'comp.windows.x',
+                'misc.forsale', 'rec.autos', 'rec.motorcycles', 'rec.sport.baseball',
+                'rec.sport.hockey', 'sci.crypt', 'sci.electronics', 'sci.med',
+                'sci.space', 'soc.religion.christian', 'talk.politics.guns',
+                'talk.politics.mideast', 'talk.politics.misc', 'talk.religion.misc']
+    if request.method == 'GET':
+        return render_template('advanced/news.html', menu=menu, weather=get_weather())
+    else:
+        index = int(request.form['index'])
+        df = pd.read_csv('static/data/news/test.csv')
+        label = f'{df.target[index]} ({target_names[df.target[index]]})'
+        test_data = []
+        test_data.append(df.data[index])
+
+        pred_c_lr = news_count_lr.predict(test_data)
+        pred_t_lr = news_tfidf_lr.predict(test_data)
+        pred_t_sv = news_tfidf_sv.predict(test_data)
+        result_dict = {'index':index, 'label':label, 
+                       'pred_c_lr':f'{pred_c_lr[0]} ({target_names[pred_c_lr[0]]})',
+                       'pred_t_lr':f'{pred_t_lr[0]} ({target_names[pred_t_lr[0]]})',
+                       'pred_t_sv':f'{pred_t_sv[0]} ({target_names[pred_t_sv[0]]})'}
+        
+        return render_template('advanced/news_res.html', menu=menu, weather=get_weather(),
+                                mtime=mtime, result=result_dict)
