@@ -12,6 +12,10 @@ from my_util.weather import get_weather
 
 rgrs_bp = Blueprint('rgrs_bp', __name__)
 
+menu = {'ho':0, 'da':0, 'ml':1, 
+        'se':0, 'co':0, 'cg':0, 'cr':0, 'wc':0,
+        'cf':0, 'ac':0, 're':1, 'cu':0}
+
 def get_weather_main():
     ''' weather = None
     try:
@@ -25,6 +29,7 @@ def get_weather_main():
     weather = get_weather()
     return weather
 
+
 kospi_dict, kosdaq_dict = {}, {}
 @rgrs_bp.before_app_first_request
 def before_app_first_request():
@@ -37,10 +42,6 @@ def before_app_first_request():
 
 @rgrs_bp.route('/stock', methods=['GET', 'POST'])
 def stock():
-    menu = {'ho':0, 'da':0, 'ml':1, 
-            'se':0, 'co':0, 'cg':0, 'cr':0, 'wc':0,
-            'cf':0, 'ac':0, 're':1, 'cu':0}
-
     if request.method == 'GET':
         return render_template('regression/stock.html', menu=menu, weather=get_weather(), 
                                 kospi=kospi_dict, kosdaq=kosdaq_dict)
@@ -87,9 +88,6 @@ def stock():
 
 @rgrs_bp.route('/iris', methods=['GET', 'POST'])
 def iris():
-    menu = {'ho':0, 'da':0, 'ml':1, 
-            'se':0, 'co':0, 'cg':0, 'cr':0, 'wc':0,
-            'cf':0, 'ac':0, 're':1, 'cu':0}
     if request.method == 'GET':
         return render_template('regression/iris.html', menu=menu, weather=get_weather())
     else:
@@ -124,9 +122,6 @@ def iris():
 
 @rgrs_bp.route('/diabetes', methods=['GET', 'POST'])
 def diabetes():
-    menu = {'ho':0, 'da':0, 'ml':1, 
-        'se':0, 'co':0, 'cg':0, 'cr':0, 'wc':0,
-        'cf':0, 'ac':0, 're':1, 'cu':0}
     if request.method == 'GET':
         return render_template('regression/diabetes.html', menu=menu, weather=get_weather())
     else:
@@ -164,9 +159,6 @@ def diabetes():
 
 @rgrs_bp.route('/boston', methods=['GET', 'POST'])
 def boston():
-    menu = {'ho':0, 'da':0, 'ml':1, 
-            'se':0, 'co':0, 'cg':0, 'cr':0, 'wc':0,
-            'cf':0, 'ac':0, 're':1, 'cu':0}
     if request.method == 'GET':
         feature_list = [
             'CRIM', 'ZN', 'INDUS', 'CHAS', 
