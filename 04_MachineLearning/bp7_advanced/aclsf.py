@@ -69,10 +69,16 @@ def digits():
 
 @aclsf_bp.before_app_first_request
 def before_app_first_request():
+    print('============ Advanced Blueprint before_app_first_request() ============')
     global news_count_lr, news_tfidf_lr, news_tfidf_sv
     news_count_lr = joblib.load('static/model/news_count_lr.pkl')
     news_tfidf_lr = joblib.load('static/model/news_tfidf_lr.pkl')
     news_tfidf_sv = joblib.load('static/model/news_tfidf_sv.pkl')
+    
+    global imdb_count_lr, imdb_tfidf_lr, imdb_tfidf_sv
+    imdb_count_lr = joblib.load('static/model/imdb_count_lr.pkl')
+    imdb_tfidf_lr = joblib.load('static/model/imdb_tfidf_lr.pkl')
+    imdb_tfidf_sv = joblib.load('static/model/imdb_tfidf_sv.pkl')
 
 @aclsf_bp.route('/news', methods=['GET', 'POST'])
 def news():
@@ -100,4 +106,28 @@ def news():
                        'pred_t_sv':f'{pred_t_sv[0]} ({target_names[pred_t_sv[0]]})'}
         
         return render_template('advanced/news_res.html', menu=menu, weather=get_weather(),
-                                mtime=mtime, result=result_dict)
+                                news=df.data[index], res=result_dict)
+
+@aclsf_bp.route('/imdb', methods=['GET', 'POST'])
+def imdb():
+    if request.method == 'GET':
+        return render_template('advanced/imdb.html', menu=menu, weather=get_weather())
+    else:
+        test_data = []
+        label = '리뷰 직접 입력'
+        if request.form['option'] == 'index':
+            index = int(request.form['index'])
+            df_test = pd.read_csv('static/data/IMDB_test.csv')
+            test_data.append(df_test.iloc[index, 0])
+            label = '긍정' if df_test.sentiment[index] else '부정'
+        else:
+            test_data.append(request.form['review'])
+
+        pred_cl = '긍정' if imdb_count_lr.predict(test_data)[0] else '부정'
+        pred_tl = '긍정' if imdb_tfidf_lr.predict(test_data)[0] else '부정'
+        pred_ts = '긍정' if imdb_tfidf_sv.predict(test_data)[0] else '부정'
+        result_dict = {
+            'label': label, 'pred_cl': pred_cl, 'pred_tl': pred_tl, 'pred_ts': pred_ts
+        }
+        return render_template('advanced/imdb_res.html', menu=menu, weather=get_weather(),
+                                res=result_dict, review=test_data[0])
