@@ -64,9 +64,11 @@ def stock():
         end_learn = today - timedelta(days=1)
 
         stock_data = pdr.DataReader(code, data_source='yahoo', start=start_learn, end=end_learn)
+        current_app.logger.debug(f"get stock data: {company}({code})")
         
         df = pd.DataFrame({'ds': stock_data.index, 'y': stock_data.Close})
         df.reset_index(inplace=True)
+        current_app.logger.debug(f'{stock_data}')
         try:
             del df['Date']
         except:
@@ -82,7 +84,6 @@ def stock():
         fig.savefig(img_file)
         mtime = int(os.stat(img_file).st_mtime)
 
-        current_app.logger.debug(f"get stock data: 주가지수: {market}, 종목명: {company}, 종목코드: {code}, 학습기간: {learn_period}년, 예측기간: {pred_period}일")
         return render_template('regression/stock_res.html', menu=menu, weather=get_weather_main(), 
                                 mtime=mtime, company=company, code=code)
 
