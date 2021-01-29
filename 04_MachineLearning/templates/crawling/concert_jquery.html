@@ -10,14 +10,14 @@
 {% endblock %}
 {% block weather %} {{ weather|safe() }} {% endblock %}
 {% block subtitle %}
-    <strong>콘서트 티켓(인터파크)</strong>
+    <small>콘서트티켓(인터파크) - </small><strong>실시간</strong>
 {% endblock %}
 {% block content %}
     <table id="example" class="display compact" style="width:100%;">
         <thead>
             <tr>
-                <th>index</th><th>Rank</th><th>Img</th>
-                <th>공연명</th><th>기간</th><th>Share</th>
+                <th>index</th><th>순위</th><th>Img</th>
+                <th>공연명</th><th>기간</th><th>점유율</th>
             </tr>
         </thead>
         <tbody>
