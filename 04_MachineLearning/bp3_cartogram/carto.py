@@ -11,6 +11,10 @@ from my_util.weather import get_weather
 
 carto_bp = Blueprint('carto_bp', __name__)
 
+menu = {'ho':0, 'da':1, 'ml':0, 
+        'se':0, 'co':0, 'cg':1, 'cr':0, 'wc':0,
+        'cf':0, 'ac':0, 're':0, 'cu':0}
+
 def get_weather_main():
     weather = None
     try:
@@ -87,9 +91,6 @@ def drawKorea(targetData, blockedMap, cmapname, save_path):
 
 @carto_bp.route('/extinction', methods=['GET', 'POST'])
 def extinction():
-    menu = {'ho':0, 'da':1, 'ml':0, 
-            'se':0, 'co':0, 'cg':1, 'cr':0, 'wc':0,
-            'cf':0, 'ac':0, 're':0, 'cu':0}
     if request.method == 'GET':
         return render_template('cartogram/extinction.html', menu=menu, weather=get_weather_main(),
         item_list=['인구수 계','여성비율','2030 여성비율','고령자 비율', '소멸위기지역'])
@@ -113,9 +114,6 @@ def extinction():
 
 @carto_bp.route('/coffee', methods=['GET', 'POST'])
 def coffee():
-    menu = {'ho':0, 'da':1, 'ml':0, 
-            'se':0, 'co':0, 'cg':1, 'cr':0, 'wc':0,
-            'cf':0, 'ac':0, 're':0, 'cu':0}
     item_list = ['커피지수','스타벅스 매장수','커피빈 매장수','이디야 매장수','빽다방 매장수']
     if request.method == 'GET':
         return render_template('cartogram/coffee.html', menu=menu, weather=get_weather_main(), item_list=item_list)
@@ -145,9 +143,6 @@ def coffee():
 
 @carto_bp.route('/burger', methods=['GET', 'POST'])
 def burger():
-    menu = {'ho':0, 'da':1, 'ml':0, 
-            'se':0, 'co':0, 'cg':1, 'cr':0, 'wc':0,
-            'cf':0, 'ac':0, 're':0, 'cu':0}
     item_list = ['버거 지수','버거킹 매장수','맥도날드 매장수','KFC 매장수','롯데리아 매장수']
     if request.method == 'GET':
         return render_template('cartogram/burger.html', menu=menu, weather=get_weather_main(), item_list=item_list)

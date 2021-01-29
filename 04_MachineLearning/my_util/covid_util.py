@@ -121,9 +121,14 @@ def make_corona_raw_df(start_date, end_date):
     cdf_raw['합계'] = cdf_raw.sum(axis=1)
     return cdf_raw, gu_list
 
-def make_corona_df(cdf_raw):
+# 최근 1년치 데이터만 보여주기 위해 수정
+def make_corona_df(cdf_raw, start_month):
     cdfM = cdf_raw.resample('M').sum().astype(int)
-    cdfM.index = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월']
+    month_list = []
+    for i in range(12):
+        month = (start_month + i) % 12
+        month_list.append(f'{month if month else 12}월')
+    cdfM.index = month_list
     cdf = cdfM.T
     cdf['누적'] = cdf.sum(axis=1)
 

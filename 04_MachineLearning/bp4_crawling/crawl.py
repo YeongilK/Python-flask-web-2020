@@ -9,6 +9,10 @@ import my_util.crawl_util as cu
 
 crawl_bp = Blueprint('crawl_bp', __name__)
 
+menu = {'ho':0, 'da':1, 'ml':0, 
+        'se':0, 'co':0, 'cg':0, 'cr':1, 'wc':0,
+        'cf':0, 'ac':0, 're':0, 'cu':0}
+
 def get_weather_main():
     weather = None
     try:
@@ -23,9 +27,6 @@ def get_weather_main():
 
 @crawl_bp.route('/food', methods=['GET', 'POST'])
 def food():
-    menu = {'ho':0, 'da':1, 'ml':0, 
-            'se':0, 'co':0, 'cg':0, 'cr':1, 'wc':0,
-            'cf':0, 'ac':0, 're':0, 'cu':0}
     if request.method == 'GET':
         place = request.args.get('place', '발산역')
         rest_list = cu.siksin(place)
@@ -37,36 +38,24 @@ def food():
 
 @crawl_bp.route('/music')
 def music():
-    menu = {'ho':0, 'da':1, 'ml':0, 
-            'se':0, 'co':0, 'cg':0, 'cr':1, 'wc':0,
-            'cf':0, 'ac':0, 're':0, 'cu':0}
     music_list = cu.genie()
     return render_template('crawling/music.html', menu=menu, weather=get_weather(),
                             music_list=music_list)
 
 @crawl_bp.route('/music_jquery')
 def music_jquery():
-    menu = {'ho':0, 'da':1, 'ml':0, 
-            'se':0, 'co':0, 'cg':0, 'cr':1, 'wc':0,
-            'cf':0, 'ac':0, 're':0, 'cu':0}
     music_list = cu.genie()
     return render_template('crawling/music_jquery.html', menu=menu, weather=get_weather(),
                             music_list=music_list)
 
 @crawl_bp.route('/concert')
 def concert():
-    menu = {'ho':0, 'da':1, 'ml':0, 
-            'se':0, 'co':0, 'cg':0, 'cr':1, 'wc':0,
-            'cf':0, 'ac':0, 're':0, 'cu':0}
     concert_list = cu.interpark()
     return render_template('crawling/concert.html', menu=menu, weather=get_weather(),
                             concert_list=concert_list)
 
 @crawl_bp.route('/concert_jquery')
 def concert_jquery():
-    menu = {'ho':0, 'da':1, 'ml':0, 
-            'se':0, 'co':0, 'cg':0, 'cr':1, 'wc':0,
-            'cf':0, 'ac':0, 're':0, 'cu':0}
     music_list = cu.interpark()
     return render_template('crawling/concert_jquery.html', menu=menu, weather=get_weather(),
                             concert_list=music_list)

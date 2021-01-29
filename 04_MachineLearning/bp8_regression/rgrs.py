@@ -68,7 +68,6 @@ def stock():
         
         df = pd.DataFrame({'ds': stock_data.index, 'y': stock_data.Close})
         df.reset_index(inplace=True)
-        current_app.logger.debug(f'{stock_data}')
         try:
             del df['Date']
         except:

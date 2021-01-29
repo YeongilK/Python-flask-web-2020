@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, session, g
 from flask import current_app, redirect, url_for
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 import os, folium, json
 import pandas as pd
 import matplotlib as mpl 
@@ -10,6 +10,10 @@ import db.db_module as dm
 import my_util.covid_util as cu
 
 covid_bp = Blueprint('covid_bp', __name__)
+
+menu = {'ho':0, 'da':1, 'ml':0, 
+        'se':0, 'co':1, 'cg':0, 'cr':0, 'wc':0,
+        'cf':0, 'ac':0, 're':0, 'cu':0}
 
 def get_weather_main():
     weather = None
@@ -25,7 +29,6 @@ def get_weather_main():
 
 @covid_bp.route('/daily')
 def daily():
-    menu = {'ho':0, 'da':1, 'ml':0, 'se':0, 'co':1, 'cg':0, 'cr':0, 'st':0, 'wc':0}
     date = request.args.get('date', datetime.now().strftime('%Y-%m-%d'))
     rows = dm.get_region_daily(date)
 
@@ -42,7 +45,6 @@ def update_region(date):
 
 @covid_bp.route('/agender')
 def agender():
-    menu = {'ho':0, 'da':1, 'ml':0, 'se':0, 'co':1, 'cg':0, 'cr':0, 'st':0, 'wc':0}
     date = request.args.get('date', datetime.now().strftime('%Y-%m-%d'))
     rows = dm.get_agender_daily(date)
 
@@ -59,7 +61,6 @@ def update_agender(date):
 
 @covid_bp.route('/overseas')
 def overseas():
-    menu = {'ho':0, 'da':1, 'ml':0, 'se':0, 'co':1, 'cg':0, 'cr':0, 'st':0, 'wc':0}
     date = request.args.get('date', datetime.now().strftime('%Y-%m-%d'))
     rows = dm.get_overseas_daily(date)
 
@@ -79,7 +80,6 @@ def seoul_seq():
     if request.method == 'GET':
         mpl.rc('font', family='Malgun Gothic')
         mpl.rc('axes', unicode_minus=False)
-        menu = {'ho':0, 'da':1, 'ml':0, 'se':0, 'co':1, 'cg':0, 'cr':0, 'st':0, 'wc':0}
 
         start_date = request.args.get('startDate', '2020-01-01')
         end_date = request.args.get('endDate', datetime.now().strftime('%Y-%m-%d'))
@@ -114,12 +114,17 @@ def seoul_comp():
     if request.method == 'GET':
         mpl.rc('font', family='Malgun Gothic')
         mpl.rc('axes', unicode_minus=False)
-        menu = {'ho':0, 'da':1, 'ml':0, 'se':0, 'co':1, 'cg':0, 'cr':0, 'st':0, 'wc':0}
 
-        start_date = request.args.get('startDate', '2020-01-01')
-        end_date = request.args.get('endDate', datetime.now().strftime('%Y-%m-%d'))
+        # 최근 1년치 데이터만 보여주기 위해 수정
+        today = date.today()
+        last_month = 1 if today.month == 12 else today.month+1
+        last_date = date(today.year-1, last_month, 1)
+
+        start_date = request.args.get('startDate', last_date.strftime('%Y-%m-%d'))
+        end_date = request.args.get('endDate', today.strftime('%Y-%m-%d'))
         cdf_raw, _ = cu.make_corona_raw_df(start_date, end_date)
-        cdf = cu.make_corona_df(cdf_raw)
+        cdf = cu.make_corona_df(cdf_raw, last_month)
+        ###################
 
         month = request.args.get('month', 'ratio')
         img_file = os.path.join(current_app.root_path, 'static/img/seoul_comp.png')
@@ -134,7 +139,11 @@ def seoul_comp():
         plt.ylabel('')
         plt.savefig(img_file)
         mtime = int(os.stat(img_file).st_mtime)
-        month_list = ['누적','12월','11월','10월','9월','8월','7월','6월','5월','4월','3월','2월','1월']
+        month_list = ['누적']
+        # 최근 1년치 데이터만 보여주기 위해 수정
+        for i in range(12):
+            new_month = (today.month + 12 - i) % 12
+            month_list.append(f'{new_month if new_month else 12}월')
 
         return render_template('covid/seoul_comp.html', menu=menu, weather=get_weather_main(),
                                 mtime=mtime, month=month, month_list=month_list)
@@ -146,10 +155,8 @@ def seoul_comp():
         
         month = request.form['month']
         return redirect(url_for('covid_bp.seoul_comp')+f'?month={month}')
-
 @covid_bp.route('/seoul_map/<option>')
 def seoul_map(option):
-    menu = {'ho':0, 'da':1, 'ml':0, 'se':0, 'co':1, 'cg':0, 'cr':0, 'st':0, 'wc':0}
     geo_data = json.load(open('./static/data/skorea_municipalities_geo_simple.json', encoding='utf8'))
     
     start_date = request.args.get('startDate', '2020-01-01')
