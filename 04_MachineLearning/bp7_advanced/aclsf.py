@@ -4,9 +4,11 @@ from fbprophet import Prophet
 from datetime import datetime, timedelta
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.datasets import load_digits
+from konlpy.tag import Okt
 import os, joblib
 import pandas as pd
 import matplotlib.pyplot as plt
+import re
 from my_util.weather import get_weather
 
 aclsf_bp = Blueprint('aclsf_bp', __name__)
@@ -70,15 +72,19 @@ def digits():
 @aclsf_bp.before_app_first_request
 def before_app_first_request():
     print('============ Advanced Blueprint before_app_first_request() ============')
-    global news_count_lr, news_tfidf_lr, news_tfidf_sv
-    news_count_lr = joblib.load('static/model/news_count_lr.pkl')
+    #global news_count_lr, news_tfidf_lr, news_tfidf_sv
+    #global imdb_count_lr, imdb_tfidf_lr, imdb_tfidf_sv
+    global naver_count_lr, naver_count_nb, naver_tfidf_lr, naver_tfidf_nb
+    """ news_count_lr = joblib.load('static/model/news_count_lr.pkl')
     news_tfidf_lr = joblib.load('static/model/news_tfidf_lr.pkl')
     news_tfidf_sv = joblib.load('static/model/news_tfidf_sv.pkl')
-    
-    global imdb_count_lr, imdb_tfidf_lr, imdb_tfidf_sv
     imdb_count_lr = joblib.load('static/model/imdb_count_lr.pkl')
     imdb_tfidf_lr = joblib.load('static/model/imdb_tfidf_lr.pkl')
-    imdb_tfidf_sv = joblib.load('static/model/imdb_tfidf_sv.pkl')
+    imdb_tfidf_sv = joblib.load('static/model/imdb_tfidf_sv.pkl') """
+    naver_count_lr = joblib.load('static/model/naver_count_lr.pkl')
+    naver_count_nb = joblib.load('static/model/naver_count_nb.pkl')
+    naver_tfidf_lr = joblib.load('static/model/naver_tfidf_lr.pkl')
+    naver_tfidf_nb = joblib.load('static/model/naver_tfidf_nb.pkl')
 
 @aclsf_bp.route('/news', methods=['GET', 'POST'])
 def news():
@@ -131,3 +137,36 @@ def imdb():
         }
         return render_template('advanced/imdb_res.html', menu=menu, weather=get_weather(),
                                 res=result_dict, review=test_data[0])
+
+@aclsf_bp.route('/naver', methods=['GET', 'POST'])
+def naver():
+    if request.method == 'GET':
+        return render_template('advanced/naver.html', menu=menu, weather=get_weather())
+    else:
+        if request.form['option'] == 'index':
+            index = int(request.form['index'] or '0')
+            df_test = pd.read_csv('static/data/NaverMovie/test.tsv', sep='\t')
+            org_review = df_test.document[index]
+            label = '긍정' if df_test.label[index] else '부정'
+        else:
+            org_review = request.form['review']
+            label = '리뷰 직접 입력'
+
+        test_data = []
+        review = re.sub("[^ㄱ-ㅎㅏ-ㅣ가-힣 ]", "", org_review)
+        okt = Okt()
+        stopwords = ['의','가','이','은','들','는','좀','잘','걍','과','도','를','으로','자','에','와','한','하다','을']
+        morphs = okt.morphs(review, stem=True)     # 토큰화
+        temp_X = ' '.join([word for word in morphs if not word in stopwords])   # 불용어 제거
+        test_data.append(temp_X)
+
+        pred_cl = '긍정' if naver_count_lr.predict(test_data)[0] else '부정'
+        pred_cn = '긍정' if naver_count_nb.predict(test_data)[0] else '부정'
+        pred_tl = '긍정' if naver_tfidf_lr.predict(test_data)[0] else '부정'
+        pred_tn = '긍정' if naver_tfidf_nb.predict(test_data)[0] else '부정'
+        result_dict = {
+            'label': label, 'pred_cl': pred_cl, 'pred_cn': pred_cn,
+            'pred_tl': pred_tl, 'pred_tn': pred_tn
+        }
+        return render_template('advanced/naver_res.html', menu=menu, weather=get_weather(),
+                                res=result_dict, review=org_review)
