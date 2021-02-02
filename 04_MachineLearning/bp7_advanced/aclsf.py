@@ -5,7 +5,8 @@ from datetime import datetime, timedelta
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.datasets import load_digits
 from konlpy.tag import Okt
-import os, joblib
+from urllib.parse import quote
+import os, joblib, re, requests, json
 import pandas as pd
 import matplotlib.pyplot as plt
 import re
@@ -71,17 +72,17 @@ def digits():
 
 @aclsf_bp.before_app_first_request
 def before_app_first_request():
-    ''' print('============ Advanced Blueprint before_app_first_request() ============')
+    print('============ Advanced Blueprint before_app_first_request() ============')
     global news_count_lr, news_tfidf_lr, news_tfidf_sv
     global imdb_count_lr, imdb_tfidf_lr, imdb_tfidf_sv
     global naver_count_lr, naver_count_nb, naver_tfidf_lr, naver_tfidf_nb
-    news_count_lr = joblib.load('static/model/news_count_lr.pkl')
+    ''' news_count_lr = joblib.load('static/model/news_count_lr.pkl')
     news_tfidf_lr = joblib.load('static/model/news_tfidf_lr.pkl')
-    news_tfidf_sv = joblib.load('static/model/news_tfidf_sv.pkl')
+    news_tfidf_sv = joblib.load('static/model/news_tfidf_sv.pkl') '''
     imdb_count_lr = joblib.load('static/model/imdb_count_lr.pkl')
     imdb_tfidf_lr = joblib.load('static/model/imdb_tfidf_lr.pkl')
     imdb_tfidf_sv = joblib.load('static/model/imdb_tfidf_sv.pkl')
-    naver_count_lr = joblib.load('static/model/naver_count_lr.pkl')
+    ''' naver_count_lr = joblib.load('static/model/naver_count_lr.pkl')
     naver_count_nb = joblib.load('static/model/naver_count_nb.pkl')
     naver_tfidf_lr = joblib.load('static/model/naver_tfidf_lr.pkl')
     naver_tfidf_nb = joblib.load('static/model/naver_tfidf_nb.pkl') '''
@@ -135,8 +136,21 @@ def imdb():
         result_dict = {
             'label': label, 'pred_cl': pred_cl, 'pred_tl': pred_tl, 'pred_ts': pred_ts
         }
+
+        ### 리뷰 영어 --> 한글 번역 ###
+        text = test_data[0]
+        with open('static/keys/kakaoaikey.txt') as kfile:
+            kai_key = kfile.read(100)
+
+        text = text.replace('\n', ''); text = text.replace('\r', '')
+        url = f'https://dapi.kakao.com/v2/translation/translate?query={quote(text)}&src_lang=en&target_lang=kr'     # 영어(en) --> 한글(kr)
+        result = requests.get(url, headers={"Authorization": "KakaoAK "+kai_key}).json()
+        tr_text_list = result['translated_text'][0]
+        kakao_res = '\n'.join([tmp_text for tmp_text in tr_text_list])
+        ###############################
+
         return render_template('advanced/imdb_res.html', menu=menu, weather=get_weather(),
-                                res=result_dict, review=test_data[0])
+                                res=result_dict, review=test_data[0], translated_text=kakao_res)
 
 @aclsf_bp.route('/naver', methods=['GET', 'POST'])
 def naver():
