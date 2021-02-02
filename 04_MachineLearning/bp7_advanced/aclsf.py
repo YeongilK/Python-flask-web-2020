@@ -15,7 +15,7 @@ aclsf_bp = Blueprint('aclsf_bp', __name__)
 
 menu = {'ho':0, 'da':0, 'ml':1, 
         'se':0, 'co':0, 'cg':0, 'cr':0, 'wc':0,
-        'cf':0, 'ac':1, 're':0, 'cu':0}
+        'cf':0, 'ac':1, 're':0, 'cu':0, 'nl':0}
 
 def get_weather_main():
     ''' weather = None
@@ -71,20 +71,20 @@ def digits():
 
 @aclsf_bp.before_app_first_request
 def before_app_first_request():
-    print('============ Advanced Blueprint before_app_first_request() ============')
-    #global news_count_lr, news_tfidf_lr, news_tfidf_sv
-    #global imdb_count_lr, imdb_tfidf_lr, imdb_tfidf_sv
+    ''' print('============ Advanced Blueprint before_app_first_request() ============')
+    global news_count_lr, news_tfidf_lr, news_tfidf_sv
+    global imdb_count_lr, imdb_tfidf_lr, imdb_tfidf_sv
     global naver_count_lr, naver_count_nb, naver_tfidf_lr, naver_tfidf_nb
-    """ news_count_lr = joblib.load('static/model/news_count_lr.pkl')
+    news_count_lr = joblib.load('static/model/news_count_lr.pkl')
     news_tfidf_lr = joblib.load('static/model/news_tfidf_lr.pkl')
     news_tfidf_sv = joblib.load('static/model/news_tfidf_sv.pkl')
     imdb_count_lr = joblib.load('static/model/imdb_count_lr.pkl')
     imdb_tfidf_lr = joblib.load('static/model/imdb_tfidf_lr.pkl')
-    imdb_tfidf_sv = joblib.load('static/model/imdb_tfidf_sv.pkl') """
+    imdb_tfidf_sv = joblib.load('static/model/imdb_tfidf_sv.pkl')
     naver_count_lr = joblib.load('static/model/naver_count_lr.pkl')
     naver_count_nb = joblib.load('static/model/naver_count_nb.pkl')
     naver_tfidf_lr = joblib.load('static/model/naver_tfidf_lr.pkl')
-    naver_tfidf_nb = joblib.load('static/model/naver_tfidf_nb.pkl')
+    naver_tfidf_nb = joblib.load('static/model/naver_tfidf_nb.pkl') '''
 
 @aclsf_bp.route('/news', methods=['GET', 'POST'])
 def news():

@@ -13,7 +13,7 @@ clust_bp = Blueprint('clust_bp', __name__)
 
 menu = {'ho':0, 'da':0, 'ml':1, 
         'se':0, 'co':0, 'cg':0, 'cr':0, 'wc':0,
-        'cf':0, 'ac':0, 're':0, 'cu':1}
+        'cf':0, 'ac':0, 're':0, 'cu':1, 'nl':0}
 
 def get_weather_main():
     ''' weather = None
