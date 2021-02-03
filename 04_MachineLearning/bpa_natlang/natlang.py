@@ -1,7 +1,8 @@
 from flask import Blueprint, render_template, request, session, redirect, url_for
 from flask import current_app
-import os, json, requests
 from urllib.parse import quote
+from konlpy.tag import Okt
+import os, json, requests, joblib, re
 from my_util.weather import get_weather
 
 natlang_bp = Blueprint('natlang_bp', __name__)
@@ -34,8 +35,7 @@ def translate():
         ### 네이버(파파고) 번역 ###
         n_url = "https://naveropenapi.apigw.ntruss.com/nmt/v1/translation"
         with open('static/keys/papago_key.json') as nkey:
-            json_str = nkey.read(100)
-        json_obj = json.loads(json_str)
+            json_obj = json.load(nkey)
         client_id = list(json_obj.keys())[0]
         client_secret = json_obj[client_id]
         headers = {
@@ -106,3 +106,54 @@ def tts():
 
         return render_template('natlang/tts_res.html', menu=menu, weather=get_weather_main(),
                                 res=val, mtime=mtime)
+
+@natlang_bp.before_app_first_request
+def before_app_first_request():
+    global imdb_tfidf_lr, naver_tfidf_nb
+    imdb_tfidf_lr = joblib.load('static/model/imdb_tfidf_lr.pkl')
+    naver_tfidf_nb = joblib.load('static/model/naver_tfidf_nb.pkl')
+
+@natlang_bp.route('/emotion', methods=['GET', 'POST'])
+def emotion():
+    if request.method == 'GET':
+        return render_template('natlang/emotion.html', menu=menu, weather=get_weather_main())
+    else:
+        text = request.form['text']
+
+        ### 카카오 언어감지 ###
+        with open('static/keys/kakaoaikey.txt') as kfile:
+            kai_key = kfile.read(100)
+
+        k_url = f'https://dapi.kakao.com/v3/translation/language/detect?query={quote(text)}'
+        result = requests.get(k_url, headers={"Authorization": "KakaoAK "+kai_key}).json()
+        lang = result['language_info'][0]['code']
+        #######################
+        
+        ### 카카오 번역 ###
+        dst = 'en' if lang == 'kr' else 'kr'
+        k_url = f'https://dapi.kakao.com/v2/translation/translate?query={quote(text)}&src_lang={lang}&target_lang={dst}'
+        result = requests.get(k_url, headers={"Authorization": "KakaoAK "+kai_key}).json()
+        tr_text_list = result['translated_text'][0]
+        tr_text = '\n'.join([tmp_text for tmp_text in tr_text_list])
+        
+        okt = Okt()
+        if lang == 'kr':
+            review = re.sub("[^ㄱ-ㅎㅏ-ㅣ가-힣 ]", "", text)
+        else:
+            review = re.sub("[^ㄱ-ㅎㅏ-ㅣ가-힣 ]", "", tr_text)
+        stopwords = ['의','가','이','은','들','는','좀','잘','걍','과',
+                    '도','를','으로','자','에','와','한','하다','을']
+        morphs = okt.morphs(review, stem=True) # 토큰화
+        ko_review = ' '.join([word for word in morphs if not word in stopwords]) # 불용어 제거
+        en_review = tr_text if lang == 'kr' else text
+
+        pred_ko = '긍정' if naver_tfidf_nb.predict([ko_review])[0] else '부정'
+        pred_en = '긍정' if imdb_tfidf_lr.predict([en_review])[0] else '부정'
+
+        if lang == 'kr':
+            res = {'src_text':text, 'dst_text':tr_text, 'src_pred':pred_ko, 'dst_pred':pred_en}
+        else:
+            res = {'src_text':text, 'dst_text':tr_text, 'src_pred':pred_en, 'dst_pred':pred_ko}
+        ###########################
+
+        return render_template('natlang/emotion_res.html', menu=menu, weather=get_weather(), res=res)
