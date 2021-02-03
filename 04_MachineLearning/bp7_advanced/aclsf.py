@@ -78,11 +78,11 @@ def before_app_first_request():
     global naver_count_lr, naver_count_nb, naver_tfidf_lr, naver_tfidf_nb
     ''' news_count_lr = joblib.load('static/model/news_count_lr.pkl')
     news_tfidf_lr = joblib.load('static/model/news_tfidf_lr.pkl')
-    news_tfidf_sv = joblib.load('static/model/news_tfidf_sv.pkl') '''
+    news_tfidf_sv = joblib.load('static/model/news_tfidf_sv.pkl')
     imdb_count_lr = joblib.load('static/model/imdb_count_lr.pkl')
     imdb_tfidf_lr = joblib.load('static/model/imdb_tfidf_lr.pkl')
     imdb_tfidf_sv = joblib.load('static/model/imdb_tfidf_sv.pkl')
-    ''' naver_count_lr = joblib.load('static/model/naver_count_lr.pkl')
+    naver_count_lr = joblib.load('static/model/naver_count_lr.pkl')
     naver_count_nb = joblib.load('static/model/naver_count_nb.pkl')
     naver_tfidf_lr = joblib.load('static/model/naver_tfidf_lr.pkl')
     naver_tfidf_nb = joblib.load('static/model/naver_tfidf_nb.pkl') '''
