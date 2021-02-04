@@ -10,21 +10,21 @@
             <table class="table table-striped">
                 <tr>
                     <td>테스트 인덱스</td>
-                    <td style="text-align: center;">{{res.index}}</td>
+                    <td style="text-align: center;"><strong>{{res.index}}</strong></td>
                 </tr>
                 <tr>
                     <td>레이블(target 값)</td>
                     <td style="text-align: center;"><strong>{{res.label}}</strong></td>
                 </tr>
-                <tr>
+                <tr style="background-color: beige;">
                     <td>CountVectorizer + 로지스틱 회귀 분류 결과</td>
                     <td style="text-align: center;"><strong>{{res.pred_c_lr}}</strong></td>
                 </tr>
-                <tr>
+                <tr style="background-color: rgb(220, 245, 223)">
                     <td>TfidfVectorizer + 로지스틱 회귀 분류 결과</td>
                     <td style="text-align: center;"><strong>{{res.pred_t_lr}}</strong></td>
                 </tr>
-                <tr>
+                <tr style="background-color: rgb(220, 245, 223)">
                     <td>TfidfVectorizer + 서포트 벡터 머신 분류 결과</td>
                     <td style="text-align: center;"><strong>{{res.pred_t_sv}}</strong></td>
                 </tr>
@@ -37,9 +37,19 @@
             </table>
         </div>
         <div class="col-2"></div>
+        
         <div class="col-1"></div>
         <div class="col-10">
-            <small>{{news}}</small>
+            <table class="table" style="margin-bottom: 100px;">
+                <tr class="d-flex">
+                    <td class="col-2"><strong>원본</strong></td>
+                    <td class="col-10">{{news}}</td>
+                </tr>
+                <tr class="d-flex">
+                    <td class="col-2"><strong>번역본</strong></td>
+                    <td class="col-10">{{translated_text}}</td>
+                </tr>
+            </table>
         </div>
         <div class="col-1"></div>
     </div>

@@ -76,7 +76,7 @@ def before_app_first_request():
     global news_count_lr, news_tfidf_lr, news_tfidf_sv
     global imdb_count_lr, imdb_tfidf_lr, imdb_tfidf_sv
     global naver_count_lr, naver_count_nb, naver_tfidf_lr, naver_tfidf_nb
-    ''' news_count_lr = joblib.load('static/model/news_count_lr.pkl')
+    news_count_lr = joblib.load('static/model/news_count_lr.pkl')
     news_tfidf_lr = joblib.load('static/model/news_tfidf_lr.pkl')
     news_tfidf_sv = joblib.load('static/model/news_tfidf_sv.pkl')
     imdb_count_lr = joblib.load('static/model/imdb_count_lr.pkl')
@@ -85,7 +85,7 @@ def before_app_first_request():
     naver_count_lr = joblib.load('static/model/naver_count_lr.pkl')
     naver_count_nb = joblib.load('static/model/naver_count_nb.pkl')
     naver_tfidf_lr = joblib.load('static/model/naver_tfidf_lr.pkl')
-    naver_tfidf_nb = joblib.load('static/model/naver_tfidf_nb.pkl') '''
+    naver_tfidf_nb = joblib.load('static/model/naver_tfidf_nb.pkl')
 
 @aclsf_bp.route('/news', methods=['GET', 'POST'])
 def news():
@@ -111,9 +111,21 @@ def news():
                        'pred_c_lr':f'{pred_c_lr[0]} ({target_names[pred_c_lr[0]]})',
                        'pred_t_lr':f'{pred_t_lr[0]} ({target_names[pred_t_lr[0]]})',
                        'pred_t_sv':f'{pred_t_sv[0]} ({target_names[pred_t_sv[0]]})'}
+
+        ### 리뷰 영어 --> 한글 번역 ###
+        text = df.data[index]
+        with open('static/keys/kakaoaikey.txt') as kfile:
+            kai_key = kfile.read(100)
+
+        text = text.replace('\n', ''); text = text.replace('\r', '')
+        url = f'https://dapi.kakao.com/v2/translation/translate?query={quote(text)}&src_lang=en&target_lang=kr'     # 영어(en) --> 한글(kr)
+        result = requests.get(url, headers={"Authorization": "KakaoAK "+kai_key}).json()
+        tr_text_list = result['translated_text'][0]
+        kakao_res = '\n'.join([tmp_text for tmp_text in tr_text_list])
+        ###############################
         
         return render_template('advanced/news_res.html', menu=menu, weather=get_weather(),
-                                news=df.data[index], res=result_dict)
+                                res=result_dict, news=df.data[index],  translated_text=kakao_res)
 
 @aclsf_bp.route('/imdb', methods=['GET', 'POST'])
 def imdb():
@@ -133,9 +145,10 @@ def imdb():
         pred_cl = '긍정' if imdb_count_lr.predict(test_data)[0] else '부정'
         pred_tl = '긍정' if imdb_tfidf_lr.predict(test_data)[0] else '부정'
         pred_ts = '긍정' if imdb_tfidf_sv.predict(test_data)[0] else '부정'
+
         result_dict = {
-            'label': label, 'pred_cl': pred_cl, 'pred_tl': pred_tl, 'pred_ts': pred_ts
-        }
+                'label': label, 'pred_cl': pred_cl, 'pred_tl': pred_tl, 'pred_ts': pred_ts
+            }
 
         ### 리뷰 영어 --> 한글 번역 ###
         text = test_data[0]

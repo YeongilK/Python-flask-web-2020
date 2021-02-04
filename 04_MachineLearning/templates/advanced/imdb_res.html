@@ -13,19 +13,19 @@
         <div class="col-1"></div>
         <div class="col-10">
             <table class="table">
-                <tr style="background-color: beige;">
+                <tr>
                     <td>레이블</td>
                     <td><strong>{{res.label}}</strong></td>
                 </tr>
-                <tr>
+                <tr style="background-color: beige;">
                     <td>CountVectorizer + 로지스틱 회귀</td>
                     <td><strong>{{res.pred_cl}}</strong></td>
                 </tr>
-                <tr>
+                <tr style="background-color: rgb(220, 245, 223)">
                     <td>TfidfVectorizer + 로지스틱 회귀</td>
                     <td><strong>{{res.pred_tl}}</strong></td>
                 </tr>
-                <tr>
+                <tr style="background-color: rgb(220, 245, 223)">
                     <td>TfidfVectorizer + 서포트 벡터 머신</td>
                     <td><strong>{{res.pred_ts}}</strong></td>
                 </tr>
@@ -43,7 +43,7 @@
         <div class="col-10">
             <table class="table" style="margin-bottom: 100px;">
                 <tr class="d-flex">
-                    <td class="col-2"><strong>리뷰 원본</strong></td>
+                    <td class="col-2"><strong>원본</strong></td>
                     <td class="col-10">{{review}}</td>
                 </tr>
                 <tr class="d-flex">
