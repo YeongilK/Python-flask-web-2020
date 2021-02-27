@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block additional_head %}
+    <style>
+        td { text-align: center; }
+    </style>
+{% endblock %}
+{% block weather %} {{ weather|safe() }} {% endblock %}
+{% block subtitle %}
+    <strong>시각지능(객체 검출) 결과</strong>
+{% endblock %}
+{% block content %}
+    <div class="row mb-5">
+        <div class="col-1"></div>
+        <div class="col-9">
+            <table class="table">
+                <tr class="d-flex">
+                    <td class="col-3">원본 이미지</td>
+                    <td class="col-9"><img src="{{url_for('static', filename='upload/'+org_file, q=mtime)}}" width="500" alt="원본 이미지"></td>
+                </tr>
+                <tr class="d-flex" style="background-color: beige;">
+                    <td class="col-3">결과 이미지</td>
+                    <td class="col-9"><img src="{{url_for('static', filename='img/drawn_res/'+new_file, q=mtime)}}" width="500" alt="결과 이미지"></td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="text-align: center;">
+                        <button class="btn btn-primary" 
+                                onclick="location.href='/advanced/detection'">재실행</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="col-2"></div>
+    </div>
+{% endblock %}

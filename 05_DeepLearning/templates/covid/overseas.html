@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block additional_head %}
+    <link rel="stylesheet" href="{{url_for('static', filename='css/jquery-ui.min.css')}}">
+    <style>
+        th {
+            text-align: center;
+        }
+        a#MOVE_TOP_BTN {
+            position: fixed;
+            right: 2%;
+            bottom: 50px;
+            display: none;
+            z-index: 999;
+        }
+    </style>
+{% endblock %}
+{% block weather %} {{ weather|safe() }} {% endblock %}
+{% block subtitle %}
+    <strong">코로나-19 해외 현황</strong><small> - {{date}}</small>
+{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-3"></div>
+        <div class="col-9">
+            <div class="form-group">
+                <label class="control-label mr-2">날짜:</label>
+                <input type="text" name="dateCustomer" id="datepicker1">
+                <button class="btn btn-success btn-sm ml-2" id="submit" type="button">검색</button>
+                <button class="btn btn-success btn-sm ml-2" 
+                        onclick="location.href='/covid/update_overseas/{{date}}'">데이터 가져오기</button>
+            </div>
+        </div>
+    </div>
+    <table class="table table-sm mb-5">
+        <tr>
+            <th>대륙명</th>
+            <th>국가명</th>
+            <th style="text-align: right;">누적 확진자</th>
+            <th style="text-align: right;">사망자</th>
+            <th style="text-align: right;">치명률</th>
+        </tr>
+        {% for row in rows %}
+            <tr>
+                <td style="text-align: center;">{{row[2]}}</td>
+                <td style="text-align: center;">{{row[3]}}</td>
+                <td style="text-align: right;">{{'{:,}'.format(row[6])}}</td>
+                <td style="text-align: right;">{{'{:,}'.format(row[4])}}</td>
+                <td style="text-align: right;">{{row[5]}}%</td>
+            </tr>
+        {% endfor %}
+    </table>
+    <a id="MOVE_TOP_BTN" href="#">TOP</a>
+{% endblock %}
+{% block additional_body %}
+<script src="{{url_for('static', filename='js/jquery-ui.min.js')}}"></script>
+<script>
+    $.datepicker.setDefaults({
+        dateFormat: 'yy-mm-dd',
+        prevText: '이전 달',
+        nextText: '다음 달',
+        monthNames: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+        monthNamesShort: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+        dayNames: ['일', '월', '화', '수', '목', '금', '토'],
+        dayNamesShort: ['일', '월', '화', '수', '목', '금', '토'],
+        dayNamesMin: ['일', '월', '화', '수', '목', '금', '토'],
+        showMonthAfterYear: true,
+        yearSuffix: '년'
+    });
+    $(function() {
+        $("#datepicker1").datepicker();
+    });
+
+    $('#submit').on('click', function(e) {
+        e.preventDefault();
+
+        date = $('#datepicker1').val(); 
+        endpoint = '/covid/overseas?date=' + date;
+
+        window.location.href = endpoint
+
+        return false;
+    });
+
+    $(function() {
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 500) {
+                $('#MOVE_TOP_BTN').fadeIn();
+            } else {
+                $('#MOVE_TOP_BTN').fadeOut();
+            }
+        });
+        
+        $("#MOVE_TOP_BTN").click(function() {
+            $('html, body').animate({
+                scrollTop : 0
+            }, 400);
+            return false;
+        });
+    });
+</script>
+{% endblock %}
