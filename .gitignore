@@ -18,6 +18,7 @@ tmp/
 model/
 clust_data/
 keys/
+JPype1-1.2.0-cp38-cp38-win_amd64.whl
 
 # gitignore template for Jupyter Notebooks
 # website: http://jupyter.org/
