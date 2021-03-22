@@ -78,11 +78,11 @@ def digits():
 def before_app_first_request():
     global resnet
     resnet = ResNet50()
-    ''' global news_count_lr, news_tfidf_lr, news_tfidf_sv
+    global news_count_lr, news_tfidf_lr, news_tfidf_sv
     global imdb_count_lr, imdb_tfidf_lr, imdb_tfidf_sv
-    global naver_count_lr, naver_count_nb, naver_tfidf_lr, naver_tfidf_nb '''
+    global naver_count_lr, naver_count_nb, naver_tfidf_lr, naver_tfidf_nb
     print('============ Advanced Blueprint before_app_first_request() ============')
-    ''' news_count_lr = joblib.load('static/model/news_count_lr.pkl')
+    news_count_lr = joblib.load('static/model/news_count_lr.pkl')
     news_tfidf_lr = joblib.load('static/model/news_tfidf_lr.pkl')
     news_tfidf_sv = joblib.load('static/model/news_tfidf_sv.pkl')
     imdb_count_lr = joblib.load('static/model/imdb_count_lr.pkl')
@@ -91,7 +91,7 @@ def before_app_first_request():
     naver_count_lr = joblib.load('static/model/naver_count_lr.pkl')
     naver_count_nb = joblib.load('static/model/naver_count_nb.pkl')
     naver_tfidf_lr = joblib.load('static/model/naver_tfidf_lr.pkl')
-    naver_tfidf_nb = joblib.load('static/model/naver_tfidf_nb.pkl') '''
+    naver_tfidf_nb = joblib.load('static/model/naver_tfidf_nb.pkl')
 
 @aclsf_bp.route('/news', methods=['GET', 'POST'])
 def news():
@@ -178,7 +178,7 @@ def naver():
     else:
         if request.form['option'] == 'index':
             index = int(request.form['index'] or '0')
-            df_test = pd.read_csv('static/data/NaverMovie/test.tsv', sep='\t')
+            df_test = pd.read_csv('static/data/naver/test.tsv', sep='\t')
             org_review = df_test.document[index]
             label = '긍정' if df_test.label[index] else '부정'
         else:
