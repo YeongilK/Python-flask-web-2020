@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}호서 빅데이터{% endblock %}</title>
+    <title>{% block title %}My Flask Web{% endblock %}</title>
     <link rel="stylesheet" href="{{url_for('static', filename='css/bootstrap.min.css')}}">
     <link rel="stylesheet" href="{{url_for('static', filename='fontawesome-free-5.15.2-web/css/all.min.css')}}">
     <link rel="shortcut icon" href="{{url_for('static', filename='img/favicon.ico')}}">
@@ -14,8 +14,8 @@
 <body>
     <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
         <!-- Brand/logo -->
-        <a class="navbar-brand" style="margin-left:50px;margin-right:100px;" href="#">
-            <img src="{{url_for('static', filename='img/hoseo.png')}}" alt="Logo" style="height:45px;">
+        <a class="navbar-brand" style="margin-left:50px;margin-right:100px;" href="/">
+            <img src="{{url_for('static', filename='img/web_logo.png')}}" alt="Logo" style="height:45px;">
         </a>
 
         <!-- Links -->
@@ -27,7 +27,7 @@
             </li>
             <li class="nav-item mr-3">
                 <a class="nav-link {% if menu.da %}active{% endif %}" 
-                   href="{% if menu.da %}#{% else %}/{% endif %}">
+                    href="{% if menu.da %}#{% else %}/{% endif %}">
                     <i class="fas fa-chart-line"></i> 데이터 분석
                 </a>
             </li>

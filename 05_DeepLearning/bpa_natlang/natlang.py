@@ -110,8 +110,8 @@ def tts():
 @natlang_bp.before_app_first_request
 def before_app_first_request():
     global imdb_tfidf_lr, naver_tfidf_nb
-    ''' imdb_tfidf_lr = joblib.load('static/model/imdb_tfidf_lr.pkl')
-    naver_tfidf_nb = joblib.load('static/model/naver_tfidf_nb.pkl') '''
+    imdb_tfidf_lr = joblib.load('static/model/imdb_tfidf_lr.pkl')
+    naver_tfidf_nb = joblib.load('static/model/naver_tfidf_nb.pkl')
 
 @natlang_bp.route('/emotion', methods=['GET', 'POST'])
 def emotion():
